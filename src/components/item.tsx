@@ -19,7 +19,7 @@ export default function Item({
 }: ItemProps) {
   return (
     <div className=" row flex justify-between border-b-2 p-4 py-8" key={id}>
-      <Link href={`/product/${id}`}>
+      <Link href={`/products/${id}`}>
         <div className="row__column1 flex cursor-pointer items-center space-x-2">
           <div className="img-wrapper aspect-square w-20 rounded-lg bg-gray-400" />
           <div className="flex flex-col">

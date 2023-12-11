@@ -3,6 +3,7 @@ import Input from "@/components/input";
 import { Layout } from "@/components/layouts";
 import useMutation from "@/libs/client/useMutation";
 import { makeClassName } from "@/libs/client/utils";
+import { IResponse } from "@/libs/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
@@ -14,10 +15,6 @@ interface EnterForm {
 
 interface TokenForm {
   token?: string;
-}
-
-interface IResponse {
-  ok: boolean | undefined;
 }
 
 export default function Enter() {

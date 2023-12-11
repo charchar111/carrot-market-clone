@@ -3,6 +3,9 @@ import Input from "@/components/input";
 import { Layout } from "@/components/layouts";
 import Textarea from "@/components/textarea";
 import useMutation from "@/libs/client/useMutation";
+import { IResponse } from "@/libs/types";
+import { Product } from "@prisma/client";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
 
@@ -10,10 +13,17 @@ interface IUploadProduct {
   price: string;
   description: string;
   name: string;
-  image: string;
+  // image: string;
+}
+
+interface IResponseProduct extends IResponse {
+  // ok
+  product: Product;
 }
 
 export default function UploadDetail() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -21,14 +31,24 @@ export default function UploadDetail() {
   } = useForm<IUploadProduct>();
 
   const [mutationProduct, { data, error, loading }] =
-    useMutation("/api/products");
+    useMutation<IResponseProduct>("/api/products");
 
   const onValid: SubmitHandler<IUploadProduct> = function (data) {
-    if (loading) return;
     console.log(data);
+    if (loading) return;
+
     mutationProduct(data);
   };
-  const onInvalid = function (error: FieldErrors) {};
+  const onInvalid = function (error: FieldErrors) {
+    console.log(error);
+  };
+
+  useEffect(() => {
+    if (data?.ok) {
+      router.push(`/products/${data.product.id}`);
+    }
+  }, [data, router]);
+
   return (
     <Layout canGoBack>
       <div className="px-4 py-16">
@@ -50,12 +70,7 @@ export default function UploadDetail() {
                 />
               </svg>
 
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                {...register("image", { required: true })}
-              />
+              <input type="file" accept="image/*" className="hidden" />
             </label>
           </div>
           <div>
@@ -77,7 +92,6 @@ export default function UploadDetail() {
           </div>
           <div>
             <Textarea
-              name="textarea-upload"
               label="Description"
               row="4"
               register={register("description", { required: true })}

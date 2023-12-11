@@ -20,7 +20,7 @@ export default function profileBuy() {
           </Item>
         ))}
 
-        <FloatingButtonLink href="/product/upload" bottom="10">
+        <FloatingButtonLink href="/products/upload" bottom="10">
           <svg
             className="h-6 w-6 "
             xmlns="http://www.w3.org/2000/svg"
