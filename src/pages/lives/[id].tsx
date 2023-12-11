@@ -1,5 +1,6 @@
 import Input from "@/components/input";
 import { Layout } from "@/components/layouts";
+import Message from "@/components/message";
 
 export default function livesDetail() {
   return (
@@ -18,32 +19,19 @@ export default function livesDetail() {
           {[...Array(14)].map((_, i) => {
             if (i % 3 === 0)
               return (
-                <div className="message-others flex space-x-2 ">
-                  <div className="profill-img my-1 h-8 w-8 shrink-0 overflow-hidden rounded-full bg-gray-400 " />
-                  <div className="w-[50%] rounded-md border p-2  shadow-sm">
-                    Hi how much are you selling them for?
-                  </div>
-                </div>
+                <Message
+                  id={i}
+                  text="Hi how much are you selling them for?"
+                  avatarUrl=""
+                />
               );
             if (i % 3 === 1)
               return (
-                <div className="message-my flex flex-row-reverse space-x-2 space-x-reverse  ">
-                  <div className="profill-img my-1 h-8 w-8 shrink-0 overflow-hidden rounded-full bg-gray-400 " />
-                  <div className=" w-[50%] rounded-md border p-2 shadow-sm">
-                    I want 20,000₩
-                  </div>
-                </div>
+                <Message id={i} text="I want 20,000₩" reverse avatarUrl="" />
               );
 
             if (i % 3 === 2)
-              return (
-                <div className="message-others flex space-x-2 ">
-                  <div className="profill-img my-1 h-8 w-8 shrink-0 overflow-hidden rounded-full bg-gray-400 " />
-                  <div className="w-[50%] rounded-md border p-2  shadow-sm">
-                    미쳤어
-                  </div>
-                </div>
-              );
+              return <Message id={i} text="미쳤어" avatarUrl="" />;
             return null;
           })}
         </section>

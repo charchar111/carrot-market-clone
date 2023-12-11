@@ -9,6 +9,7 @@ export default function Input({
   kind = "text",
   label,
   name,
+  register,
   ...rest
 }: InputProps) {
   let inputPrice;
@@ -17,14 +18,15 @@ export default function Input({
   let inputChat;
   let inputText;
 
-  console.log(kind);
   switch (kind) {
     case "chat":
       inputChat = (
         <>
           <input
             type="text"
+            {...register}
             className=" w-full  rounded-md border-gray-400 pr-10 shadow-lg"
+            {...rest}
           />
           <div className="absolute right-1 rounded-full bg-orange-400  px-2 pb-1 text-white">
             <span>&rarr;</span>
@@ -37,8 +39,10 @@ export default function Input({
         <input
           id={name ? name : undefined}
           type="text"
-          className="rounded-md border-gray-400"
+          className="my-5 w-full rounded-md border-gray-400 focus:border-orange-400 focus:ring-orange-400"
           placeholder="Write a title"
+          {...register}
+          {...rest}
         />
       );
       break;
@@ -50,6 +54,8 @@ export default function Input({
           placeholder="abcd123@naver.com"
           className="mb-5 w-full appearance-none rounded-sm border-gray-200  p-2 placeholder-gray-400 shadow-sm  placeholder:text-gray-300 focus:border-orange-400 focus:ring-orange-400"
           required
+          {...register}
+          {...rest}
         />
       );
       break;
@@ -64,7 +70,9 @@ export default function Input({
             type="tel"
             className="w-full rounded-sm rounded-l-none border-gray-200 shadow-sm placeholder:text-gray-300 focus:border-orange-400 focus:ring-orange-400"
             required
+            {...register}
             placeholder="01012345678"
+            {...rest}
           />
         </div>
       );
@@ -82,6 +90,7 @@ export default function Input({
             type="text"
             className="w-full rounded-md border-gray-400 pl-8 focus:border-orange-400 focus:ring-orange-400"
             id={name}
+            {...register}
             {...rest}
           />
           <span className=" pointer-events-none absolute right-5 text-gray-500">

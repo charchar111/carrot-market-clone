@@ -2,7 +2,7 @@ import React from "react";
 import { Header } from "./headers";
 import { TabBar } from "./tabBars";
 import { totalmem } from "os";
-import { makeClassName } from "@/libs/utils";
+import { makeClassName } from "@/libs/client/utils";
 
 interface LayoutProps {
   title?: string;

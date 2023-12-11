@@ -1,4 +1,4 @@
-import { makeClassName } from "@/libs/utils";
+import { makeClassName } from "@/libs/client/utils";
 import Link from "next/link";
 
 interface floatingButtonProps {

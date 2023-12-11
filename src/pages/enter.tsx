@@ -1,69 +1,172 @@
 import ButtonDefault from "@/components/button";
 import Input from "@/components/input";
 import { Layout } from "@/components/layouts";
-import { useState } from "react";
+import useMutation from "@/libs/client/useMutation";
+import { makeClassName } from "@/libs/client/utils";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { FieldErrors, useForm } from "react-hook-form";
 
-function addClass(...classnames: string[]) {
-  return classnames.join(" ");
+interface EnterForm {
+  email?: string;
+  phone?: string;
+}
+
+interface TokenForm {
+  token?: string;
+}
+
+interface IResponse {
+  ok: boolean | undefined;
 }
 
 export default function Enter() {
+  const [enter, { loading, data, error }] =
+    useMutation<IResponse>("/api/users/enter");
+
+  const [
+    tokenEnter,
+    { loading: tokenLoading, data: tokenData, error: tokenError },
+  ] = useMutation<IResponse>("/api/users/confirm");
+
+  const { register, handleSubmit, reset } = useForm<EnterForm>();
+  const { register: tokenRegister, handleSubmit: tokenHandleSubmit } =
+    useForm<TokenForm>();
+  console.log("mutation", loading, data, error);
+
+  const onValid = function (validForm: EnterForm) {
+    enter(validForm);
+  };
+  const onInvalid = function (error: FieldErrors) {
+    console.log(error);
+  };
+
+  const onTokenValid = function (validForm: TokenForm) {
+    console.log(validForm);
+    if (tokenLoading) return;
+    tokenEnter(validForm);
+  };
+  const onTokenInvalid = function (error: FieldErrors) {
+    console.log(error);
+  };
+
   const [method, setMethod] = useState<"email" | "phone">("email");
-  const onEmailClick = () => setMethod("email");
-  const onPhoneClick = () => setMethod("phone");
+  const onEmailClick = () => {
+    setMethod("email");
+    reset();
+  };
+  const onPhoneClick = () => {
+    setMethod("phone");
+    reset();
+  };
+  const router = useRouter();
+
+  useEffect(() => {
+    if (tokenData?.ok) router.push("/");
+  }, [tokenData]);
+
   return (
     <Layout title="로그인" hasTabBar canGoBack>
       <div className="mx-auto  min-w-[250px] space-y-5 px-3  py-10 text-center   ">
         <h3 className="text-2xl font-semibold">Enter to Carrot</h3>
         <div className=" relative flex flex-col items-center space-y-5 text-center">
-          <div className="w-full">
-            <h5 className="text-gray-500">Enter using</h5>
-            <div className="mt-3 flex justify-center border-b-2 border-b-gray-300">
-              <button
-                className={addClass(
-                  "w-1/2 py-4",
-                  method === "email"
-                    ? "font-semibold text-orange-500 outline outline-2 outline-orange-300"
-                    : "",
-                )}
-                onClick={onEmailClick}
-              >
-                Email
-              </button>
-              <button
-                className={addClass(
-                  "w-1/2 py-4",
-                  method === "phone"
-                    ? "font-semibold text-orange-500 outline outline-2 outline-orange-300"
-                    : "",
-                )}
-                onClick={onPhoneClick}
-              >
-                Phone
-              </button>
-            </div>
-          </div>
-          <form className="w-full px-5">
-            <div className="mt-2">
-              <Input
-                kind={method === "email" ? "email" : "phone" ? "phone" : "text"}
-                placeholder={
-                  method === "email" ? "Email" : "phone" ? "" : undefined
-                }
-                required
-              />
-            </div>
+          {data?.ok ? (
+            <form
+              className="form-method w-full px-5"
+              onSubmit={tokenHandleSubmit(onTokenValid, onTokenInvalid)}
+            >
+              <div className="mt-2">
+                <Input
+                  register={tokenRegister("token", { required: true })}
+                  kind="text"
+                  placeholder="token"
+                  label="Confirmation Token"
+                  required
+                />
+                <p
+                  className={makeClassName(
+                    "error-message",
+                    error ? "mb-5" : "",
+                  )}
+                >
+                  {error || null}
+                </p>
+              </div>
+              <ButtonDefault text={loading ? "loading" : "Submit Token"} />
+            </form>
+          ) : (
+            <>
+              <div className=" tap-method w-full">
+                <h5 className="text-gray-500">Enter using</h5>
 
-            <ButtonDefault
-              text={
-                method === "email"
-                  ? "Get login link"
-                  : "phone"
-                    ? "Get one-time password"
-                    : null
-              }
-            />
-          </form>
+                <div className="  mt-3 flex justify-center border-b-2 border-b-gray-300">
+                  <button
+                    className={makeClassName(
+                      "w-1/2 py-4",
+                      method === "email"
+                        ? "font-semibold text-orange-500 outline outline-2 outline-orange-300"
+                        : "",
+                    )}
+                    onClick={onEmailClick}
+                  >
+                    Email
+                  </button>
+                  <button
+                    className={makeClassName(
+                      "w-1/2 py-4",
+                      method === "phone"
+                        ? "font-semibold text-orange-500 outline outline-2 outline-orange-300"
+                        : "",
+                    )}
+                    onClick={onPhoneClick}
+                  >
+                    Phone
+                  </button>
+                </div>
+              </div>
+              <form
+                className="form-method w-full px-5"
+                onSubmit={handleSubmit(onValid, onInvalid)}
+              >
+                <div className="mt-2">
+                  <Input
+                    register={register(
+                      `${method === "email" ? "email" : "phone"}`,
+                      { required: true },
+                    )}
+                    kind={
+                      method === "email" ? "email" : "phone" ? "phone" : "text"
+                    }
+                    placeholder={
+                      method === "email" ? "Email" : "phone" ? "" : undefined
+                    }
+                    required
+                  />
+                  <p
+                    className={makeClassName(
+                      "error-message",
+                      error ? "mb-5" : "",
+                    )}
+                  >
+                    {error || null}
+                  </p>
+                </div>
+
+                <ButtonDefault
+                  text={
+                    loading
+                      ? "loading"
+                      : method === "email"
+                        ? "Get login link"
+                        : "phone"
+                          ? "Get one-time password"
+                          : null
+                  }
+                />
+              </form>
+            </>
+          )}
+
           <div className="other-login w-full px-5">
             <div className="relative my-3">
               <div className="absolute w-full border "></div>

@@ -12,13 +12,12 @@
 
 - 데이터베이스
 
-  - planet scale
+  - planet scale, prisma
     - SQL, 서버리스
 
 - 지원 툴
 
   - typescript
-  - prisma
 
 - 기타
   - React 18버전 hook
@@ -29,11 +28,35 @@
 
 ## 목차
 
-    - [tailwind](#tailwind)
+[tailwind](#tailwind)
 
 ## 기능 구현
 
-### tailwind
+### tailwind ✅
 
-- 각 페이지 구현 ✅
+- 각 페이지 구현
 - 재사용 컴포넌트를 별도로 분할
+
+### db ✅
+
+- prisma, planetscale 사용
+
+### authentication ✅
+
+- 1차 인증
+
+  - email, phone 선택
+
+- 2차 인증
+  - 1차 인증 주소로 토큰 발송, 입력
+  - email: nodemailer
+  - phone: twilio
+
+### authorize ✅
+
+- 유저의 로그인 성공 시, 세션에 유저 id 저장
+
+  - iron- session 사용
+
+- 유저의 로그인 여부 확인
+  - SWR : 데이터 패치, 업데이트 기능, 리엑트 쿼리보다 가벼움
