@@ -2,16 +2,25 @@ import FloatingButtonLink from "@/components/floating-button-link";
 import Item from "@/components/item";
 import { Layout } from "@/components/layouts";
 import useUser from "@/libs/client/useUser";
+import { IResponse } from "@/libs/types";
+import { Product } from "@prisma/client";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
+
+interface ResponseProduct extends IResponse {
+  products: Product[];
+}
 
 const Home: NextPage = () => {
   const { user, isLoading } = useUser();
-
-  // const user = useUser();
-  // 유저의 로그인 여부 확인용 훅, 로그인 쿠키 존재 시, 유저 정보 반환, 없을 시 /enter로 push
-
+  const {
+    data,
+    error,
+    isLoading: isLoadingProduct,
+  } = useSWR<ResponseProduct>("/api/products");
+  console.log(data);
   console.log(user);
 
   return (
@@ -20,12 +29,12 @@ const Home: NextPage = () => {
         <title>Home</title>
       </Head>
       <div>
-        {[...Array(14)].map((_, i) => (
+        {data?.products?.map((product) => (
           <Item
-            key={i}
-            title="New iPhone 14"
-            price={95}
-            id={i}
+            key={product.id}
+            title={product.name}
+            price={product.price}
+            id={product.id}
             comment={2}
             heart={3}
           >
