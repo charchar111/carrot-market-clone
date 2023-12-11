@@ -1,9 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 
-export default new PrismaClient();
+declare global {
+  var client: PrismaClient | undefined;
+}
 
-// async function main() {
-//   prisma.user.create({ data: { email: "333@naver.com", name: "daw" } });
-// }
+const client = global.client || new PrismaClient();
 
-// main();
+if (process.env.NODE_ENV === "development") global.client = client;
+
+export default client;

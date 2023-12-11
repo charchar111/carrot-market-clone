@@ -39,7 +39,7 @@ export default function Input({
         <input
           id={name ? name : undefined}
           type="text"
-          className="my-5 w-full rounded-md border-gray-400 focus:border-orange-400 focus:ring-orange-400"
+          className="mb-5 w-full rounded-md border-gray-400 focus:border-orange-400 focus:ring-orange-400"
           placeholder="Write a title"
           {...register}
           {...rest}
@@ -79,7 +79,6 @@ export default function Input({
       break;
 
     case "price":
-      console.log("price");
       inputPrice = (
         <div className="relative mb-5 flex items-center ">
           <span className="pointer-events-none absolute left-2 text-gray-500">
@@ -89,7 +88,6 @@ export default function Input({
           <input
             type="text"
             className="w-full rounded-md border-gray-400 pl-8 focus:border-orange-400 focus:ring-orange-400"
-            id={name}
             {...register}
             {...rest}
           />
@@ -102,16 +100,24 @@ export default function Input({
   }
   return (
     <>
-      {!label ? null : (
-        <label htmlFor={name} className="select-none">
+      {!label ? (
+        <>
+          {inputChat ? inputChat : null}
+          {inputText ? inputText : null}
+          {inputEmail ? inputEmail : null}
+          {inputPhone ? inputPhone : null}
+          {inputPrice ? inputPrice : null}
+        </>
+      ) : (
+        <label className="select-none">
           {label}
+          {inputChat ? inputChat : null}
+          {inputText ? inputText : null}
+          {inputEmail ? inputEmail : null}
+          {inputPhone ? inputPhone : null}
+          {inputPrice ? inputPrice : null}
         </label>
       )}
-      {inputChat ? inputChat : null}
-      {inputText ? inputText : null}
-      {inputEmail ? inputEmail : null}
-      {inputPhone ? inputPhone : null}
-      {inputPrice ? inputPrice : null}
     </>
   );
 }
