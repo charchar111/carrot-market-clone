@@ -1,35 +1,56 @@
 import ButtonDefault from "@/components/button";
 import { Layout } from "@/components/layouts";
+import { IResponse } from "@/libs/types";
+import { Product } from "@prisma/client";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+
+interface IResponseProduct extends IResponse {
+  product: {
+    id: number;
+    user: { id: number; name: string };
+    price: number;
+    image: string;
+    name: string;
+    description: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+}
 
 export default function ItemDetail() {
+  const router = useRouter();
+  console.log(router.query);
+  // link로 이동 시 바로 존재, url 검색이나 새로고침 시 최초는 빔
+
+  const { data } = useSWR<IResponseProduct>(
+    router.query.id ? `/api/products/${router.query?.id}` : null,
+  );
+  console.log(data);
+
   return (
     <Layout canGoBack>
       <div id="item-detail">
         <div className="detail__main p-3">
           <div className="mb-5 h-44 w-full rounded-lg bg-gray-400" />
-          <Link href={`/profile/0`}>
+          <Link href={`/users/profiles/${data?.product.user.id}`}>
             <div className="profill mb-7 flex cursor-pointer items-center space-x-2 border-b-2 border-gray-100 pb-3 opacity-90 hover:opacity-100">
               <div className="aspect-square w-10  rounded-md bg-gray-400 " />
               <div>
-                <p className="font-bold text-gray-900">Steve Jebs</p>
+                <p className="font-bold text-gray-900">
+                  {data?.product?.user?.name}
+                </p>
               </div>
             </div>
           </Link>
 
           <div className="">
-            <h1 className="text-lg font-semibold text-gray-900">Galaxy S50</h1>
-            <p className="mb-3 mt-1">$140</p>
-            <p className="mb-5">
-              My money&apos;s in that office, right? If she start giving me some
-              bullshit about it ain&apos;t there, and we got to go someplace
-              else and get it, I&apos;m gonna shoot you in the head then and
-              there. Then I&apos;m gonna shoot that bitch in the kneecaps, find
-              out where my goddamn money is. She gonna tell me too. Hey, look at
-              me when I&apos;m talking to you, motherfucker. You listen: we go
-              in there, and that ni**a Winston or anybody else is in there, you
-              the first motherfucker to get shot. You understand?
-            </p>
+            <h1 className="text-lg font-semibold text-gray-900">
+              {data?.product.name}
+            </h1>
+            <p className="mb-3 mt-1">${data?.product.price}</p>
+            <p className="mb-5">{data?.product.description}</p>
             <div className="mb-5 flex space-x-3">
               <ButtonDefault text="Talk to seller" />
 

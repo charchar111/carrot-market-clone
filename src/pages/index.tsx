@@ -20,8 +20,8 @@ const Home: NextPage = () => {
     error,
     isLoading: isLoadingProduct,
   } = useSWR<ResponseProduct>("/api/products");
-  console.log(data);
-  console.log(user);
+  // console.log(data);
+  // console.log(user);
 
   return (
     <Layout title="홈" hasTabBar>
