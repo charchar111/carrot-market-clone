@@ -6,17 +6,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 
+interface ProductWithUser extends Product {
+  user: { id: number; name: string };
+}
+
 interface IResponseProduct extends IResponse {
-  product: {
-    id: number;
-    user: { id: number; name: string };
-    price: number;
-    image: string;
-    name: string;
-    description: string;
-    createdAt: Date;
-    updatedAt: Date;
-  };
+  product: ProductWithUser;
+  relatedProducts: Product[] | undefined;
 }
 
 export default function ItemDetail() {
@@ -77,14 +73,21 @@ export default function ItemDetail() {
         <div className="detail__footer p-3">
           <h2 className="mb-3 text-lg font-semibold">Similar items</h2>
           <div className="grid grid-cols-2 gap-2 ">
-            {[1, 2, 3, 4, 5, 6].map((_, i) => (
-              <div key={i} className="mb-2">
-                <div className="h-32 w-full rounded-lg bg-gray-300" />
-                <h3 className="mt-1 px-1 font-semibold text-gray-700">
-                  Galaxy S60
-                </h3>
-                <p className="px-1 text-sm font-semibold text-gray-600">$6</p>
-              </div>
+            {data?.relatedProducts?.map((relatedProduct, i) => (
+              <Link
+                key={relatedProduct.id}
+                href={`/products/${relatedProduct.id}`}
+              >
+                <div className="mb-2">
+                  <div className="h-32 w-full rounded-lg bg-gray-300" />
+                  <h3 className="mt-1 px-1 font-semibold text-gray-700">
+                    {relatedProduct.name}
+                  </h3>
+                  <p className="px-1 text-sm font-semibold text-gray-600">
+                    ${relatedProduct.price}
+                  </p>
+                </div>
+              </Link>
             ))}
           </div>
         </div>

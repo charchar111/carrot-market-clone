@@ -15,7 +15,31 @@ async function handler(
     include: { user: { select: { id: true, name: true, avatar: true } } },
   });
 
-  return res.status(200).json({ ok: true, product });
+  if (!product)
+    return res.status(404).json({
+      ok: false,
+      error: { message: "요청한 데이터를 찾을 수 없습니다." },
+    });
+
+  const terms = product?.name.split(" ").map((word) => ({
+    name: {
+      contains: word,
+    },
+  }));
+  console.log(terms);
+
+  let relatedProducts;
+  if (terms) {
+    relatedProducts = await client.product.findMany({
+      where: { OR: terms, AND: { NOT: { id: product?.id } } },
+      orderBy: { updatedAt: "desc" },
+      take: 4,
+    });
+  }
+
+  console.log(relatedProducts);
+
+  return res.status(200).json({ ok: true, product, relatedProducts });
 }
 
 export default withApiSession(withHandler({ methods: ["GET"], handler }));
