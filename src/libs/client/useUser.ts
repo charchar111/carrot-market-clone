@@ -5,8 +5,7 @@ import useSWR from "swr";
 // const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function useUser() {
-  const { data, error, mutate } = useSWR("api/users/me");
-  //   const { data, error, mutate } = useSWR("api/users/me", fetcher);
+  const { data, error, mutate } = useSWR("/api/users/me");
   const router = useRouter();
 
   useEffect(() => {
@@ -14,15 +13,4 @@ export default function useUser() {
   }, [data]);
 
   return { user: data?.profile, isLoading: !data && !error };
-  //   const [user, setUser] = useState();
-  //   useEffect(() => {
-  //     fetch("api/users/me")
-  //       .then((res) => res.json())
-  //       .then((data) => {
-  //         if (!data.ok) return router.replace("/enter");
-  //         setUser(data.profile);
-  //       });
-  //   }, [router]);
-
-  //   return user;
 }

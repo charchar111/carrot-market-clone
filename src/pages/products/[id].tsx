@@ -1,11 +1,12 @@
 import ButtonDefault from "@/components/button";
 import { Layout } from "@/components/layouts";
 import useMutation from "@/libs/client/useMutation";
+import useUser from "@/libs/client/useUser";
 import { IResponse } from "@/libs/types";
 import { Product } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 
 interface ProductWithUser extends Product {
   user: { id: number; name: string };
@@ -18,11 +19,17 @@ interface IResponseProduct extends IResponse {
 }
 
 export default function ItemDetail() {
+  // const { user, isLoading: userIsLoading } = useUser();
   const router = useRouter();
   // console.log(router.query);
   // link로 이동 시 바로 존재, url 검색이나 새로고침 시 최초는 빔
 
-  const { data, mutate, isLoading } = useSWR<IResponseProduct>(
+  // const { mutate: unboundMutate } = useSWRConfig();
+  const {
+    data,
+    mutate: boundMutate,
+    isLoading,
+  } = useSWR<IResponseProduct>(
     router.query.id ? `/api/products/${router.query?.id}` : null,
   );
   console.log(data);
@@ -32,7 +39,13 @@ export default function ItemDetail() {
     toggleFav({});
     if (!data) return;
 
-    mutate({ ...data, isLiked: !data.isLiked }, false);
+    boundMutate((prev) => prev && { ...prev, isLiked: !prev.isLiked }, false);
+    // unboundMutate(
+    //   "/api/users/me",
+    //   (prev: any) => ({ ...prev, ok: !prev?.ok }),
+    //   false,
+    // );
+    // unboundMutate 학습용 테스트 코드
   };
 
   return (
