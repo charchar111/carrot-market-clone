@@ -8,7 +8,10 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>,
 ): Promise<any> {
-  const { id } = req.query;
+  const {
+    query: { id },
+    session: { user },
+  } = req;
   if (!id) return res.status(400).json({ ok: false });
   const product = await client.product.findUnique({
     where: { id: +id.toString() },
@@ -26,7 +29,7 @@ async function handler(
       contains: word,
     },
   }));
-  console.log(terms);
+  // console.log(terms);
 
   let relatedProducts;
   if (terms) {
@@ -36,10 +39,23 @@ async function handler(
       take: 4,
     });
   }
+  let isLiked;
+  if (user && product) {
+    isLiked = Boolean(
+      await client.favorite.findFirst({
+        where: {
+          productId: product.id,
+          userId: user?.id,
+        },
+        select: { id: true },
+      }),
+    );
+  }
 
-  console.log(relatedProducts);
+  // console.log("isLiked", isLiked);
+  // console.log(relatedProducts);
 
-  return res.status(200).json({ ok: true, product, relatedProducts });
+  return res.status(200).json({ ok: true, product, isLiked, relatedProducts });
 }
 
 export default withApiSession(withHandler({ methods: ["GET"], handler }));

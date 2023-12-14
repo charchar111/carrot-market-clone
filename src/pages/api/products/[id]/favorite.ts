@@ -13,19 +13,16 @@ async function handler(
     session: { user },
   } = req;
 
-  console.log("id, user", id, user);
-  //  유저 아이디 체크
+  // 개별 유효성 검사  유저 아이디 체크
   if (!id || !user) return res.status(401).json({ ok: false });
   const aleadyExists = await client.favorite.findFirst({
-    where: {
-      productId: +id.toString(),
-      userId: +id.toString(),
-    },
+    where: { productId: +id.toString(), userId: user.id },
   });
+
   if (aleadyExists) {
     await client.favorite.delete({ where: { id: aleadyExists.id } });
   } else {
-    client.favorite.create({
+    const newf = await client.favorite.create({
       data: {
         userId: user.id,
         productId: +id.toString(),

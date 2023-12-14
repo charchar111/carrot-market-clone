@@ -1,5 +1,6 @@
 import ButtonDefault from "@/components/button";
 import { Layout } from "@/components/layouts";
+import useMutation from "@/libs/client/useMutation";
 import { IResponse } from "@/libs/types";
 import { Product } from "@prisma/client";
 import Link from "next/link";
@@ -13,6 +14,7 @@ interface ProductWithUser extends Product {
 interface IResponseProduct extends IResponse {
   product: ProductWithUser;
   relatedProducts: Product[] | undefined;
+  isLiked: boolean;
 }
 
 export default function ItemDetail() {
@@ -24,6 +26,10 @@ export default function ItemDetail() {
     router.query.id ? `/api/products/${router.query?.id}` : null,
   );
   console.log(data);
+  const [toggleFav] = useMutation(`/api/products/${router.query?.id}/favorite`);
+  const onFavoriteClick = () => {
+    toggleFav({});
+  };
 
   return (
     <Layout canGoBack>
@@ -50,11 +56,14 @@ export default function ItemDetail() {
             <div className="mb-5 flex space-x-3">
               <ButtonDefault text="Talk to seller" />
 
-              <button className="p-2 shadow-sm transition-all hover:bg-gray-100">
+              <button
+                onClick={onFavoriteClick}
+                className="p-2 shadow-sm transition-all hover:bg-gray-100"
+              >
                 <svg
                   className="h-6 w-6 "
                   xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
+                  fill={data?.isLiked ? "currentColor" : "none"}
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                   aria-hidden="true"
