@@ -19,16 +19,20 @@ interface IResponseProduct extends IResponse {
 
 export default function ItemDetail() {
   const router = useRouter();
-  console.log(router.query);
+  // console.log(router.query);
   // link로 이동 시 바로 존재, url 검색이나 새로고침 시 최초는 빔
 
-  const { data } = useSWR<IResponseProduct>(
+  const { data, mutate, isLoading } = useSWR<IResponseProduct>(
     router.query.id ? `/api/products/${router.query?.id}` : null,
   );
   console.log(data);
   const [toggleFav] = useMutation(`/api/products/${router.query?.id}/favorite`);
   const onFavoriteClick = () => {
+    if (isLoading) return;
     toggleFav({});
+    if (!data) return;
+
+    mutate({ ...data, isLiked: !data.isLiked }, false);
   };
 
   return (
@@ -36,7 +40,7 @@ export default function ItemDetail() {
       <div id="item-detail">
         <div className="detail__main p-3">
           <div className="mb-5 h-44 w-full rounded-lg bg-gray-400" />
-          <Link href={`/users/profiles/${data?.product.user.id}`}>
+          <Link href={`/users/profiles/${data?.product.user?.id}`}>
             <div className="profill mb-7 flex cursor-pointer items-center space-x-2 border-b-2 border-gray-100 pb-3 opacity-90 hover:opacity-100">
               <div className="aspect-square w-10  rounded-md bg-gray-400 " />
               <div>
@@ -49,10 +53,10 @@ export default function ItemDetail() {
 
           <div className="">
             <h1 className="text-lg font-semibold text-gray-900">
-              {data?.product.name}
+              {data?.product?.name}
             </h1>
-            <p className="mb-3 mt-1">${data?.product.price}</p>
-            <p className="mb-5">{data?.product.description}</p>
+            <p className="mb-3 mt-1">${data?.product?.price}</p>
+            <p className="mb-5">{data?.product?.description}</p>
             <div className="mb-5 flex space-x-3">
               <ButtonDefault text="Talk to seller" />
 
@@ -82,7 +86,7 @@ export default function ItemDetail() {
         <div className="detail__footer p-3">
           <h2 className="mb-3 text-lg font-semibold">Similar items</h2>
           <div className="grid grid-cols-2 gap-2 ">
-            {data?.relatedProducts?.map((relatedProduct, i) => (
+            {data?.relatedProducts?.map((relatedProduct: any, i: number) => (
               <Link
                 key={relatedProduct.id}
                 href={`/products/${relatedProduct.id}`}
