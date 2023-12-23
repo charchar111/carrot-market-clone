@@ -9,8 +9,12 @@ import Head from "next/head";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 
+interface ProductWithCount extends Product {
+  _count: { Favorites: number };
+}
+
 interface ResponseProduct extends IResponse {
-  products: Product[];
+  products: ProductWithCount[];
 }
 
 const Home: NextPage = () => {
@@ -20,7 +24,7 @@ const Home: NextPage = () => {
     error,
     isLoading: isLoadingProduct,
   } = useSWR<ResponseProduct>("/api/products");
-  // console.log(data);
+  console.log(data);
   // console.log(user);
 
   return (
@@ -35,7 +39,7 @@ const Home: NextPage = () => {
             title={product.name}
             price={product.price}
             id={product.id}
-            comment={2}
+            comment={product._count?.Favorites}
             heart={3}
           >
             <span className="mb-2 text-xs text-gray-400">Black</span>

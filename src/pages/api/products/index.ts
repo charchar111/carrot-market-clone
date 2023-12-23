@@ -9,7 +9,9 @@ async function handler(
   res: NextApiResponse<ResponseType>,
 ): Promise<any> {
   if (req.method === "GET") {
-    const products = await client.product.findMany({});
+    const products = await client.product.findMany({
+      include: { _count: { select: { Favorites: true } } },
+    });
     return res.status(200).json({ ok: true, products });
   }
 
@@ -19,7 +21,7 @@ async function handler(
       session: { user },
     } = req;
 
-    const product = await client.product.create({
+    const products = await client.product.create({
       data: {
         name,
         price: +price,
@@ -29,7 +31,7 @@ async function handler(
       },
     });
 
-    return res.status(201).json({ ok: true, product });
+    return res.status(201).json({ ok: true, products });
   }
 }
 
