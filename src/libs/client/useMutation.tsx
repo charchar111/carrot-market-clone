@@ -17,9 +17,6 @@ const useMutation: TUseMutation = function <T>(url: string) {
     data: undefined,
     error: undefined,
   });
-  // const [loading, setLoading] = useState(false);
-  // const [error, setError] = useState<undefined | any>(undefined);
-  // const [data, setData] = useState<undefined | any>(undefined);
 
   function mutation(formData: any) {
     setState((current) => {
