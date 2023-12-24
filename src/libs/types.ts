@@ -14,7 +14,7 @@ export interface IResponseCommunityWrite extends IResponse {
 }
 
 interface AnswerWithUser {
-  createdAt: Date;
+  createdAt: string;
   content: string;
   id: number;
   user: User;
@@ -34,3 +34,9 @@ export interface IResponsePostDetail extends IResponse {
   post?: PostWithUser;
   isAlreadyWonder: boolean;
 }
+
+export interface IFormCommunityAnswer {
+  answer: string;
+}
+
+export interface IResponseAnswerData extends IResponse {}

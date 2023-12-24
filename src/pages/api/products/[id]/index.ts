@@ -52,9 +52,6 @@ async function handler(
     );
   }
 
-  // console.log("isLiked", isLiked);
-  // console.log(relatedProducts);
-
   return res.status(200).json({ ok: true, product, isLiked, relatedProducts });
 }
 

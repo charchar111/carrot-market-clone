@@ -3,25 +3,45 @@ import { Layout } from "@/components/layouts";
 import Textarea from "@/components/textarea";
 import useMutation from "@/libs/client/useMutation";
 import { makeClassName } from "@/libs/client/utils";
-import { IResponse, IResponsePostDetail } from "@/libs/types";
+import {
+  IFormCommunityAnswer,
+  IResponse,
+  IResponseAnswerData,
+  IResponsePostDetail,
+} from "@/libs/types";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 
 const CommunityPostDetail: NextPage = () => {
   const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors: formErrors },
+  } = useForm<IFormCommunityAnswer>();
   const { data, error, isLoading, mutate } = useSWR<IResponsePostDetail>(
     router.query.id ? `/api/community/posts/${router.query.id}` : null,
   );
 
   const [
     mutationWondering,
-    { data: wonderData, error: wonderError, loading: wonrderLoading },
+    { data: wonderData, error: wonderError, loading: wonderLoading },
   ] = useMutation(`/api/community/posts/${router.query.id}/wondering`);
 
+  const [
+    mutationAnswer,
+    { data: answerData, error: answerError, loading: answerLoading },
+  ] = useMutation<IResponseAnswerData>(
+    `/api/community/posts/${router.query.id}/answer`,
+  );
+
   const onClickWonder = function () {
+    if (wonderLoading) return;
     mutationWondering({});
     mutate(
       (data) => {
@@ -46,10 +66,24 @@ const CommunityPostDetail: NextPage = () => {
   };
 
   useEffect(() => {
-    console.log(data);
     if (!data) return;
     if (!data?.ok) router.replace("/community");
   }, [data, router]);
+
+  const onValidAnswer: SubmitHandler<IFormCommunityAnswer> = function (
+    formData,
+  ) {
+    if (answerLoading) return;
+    mutationAnswer(formData);
+  };
+  const onInvalidAnswer = function (error: FieldErrors) {
+    console.log(error);
+  };
+
+  useEffect(() => {
+    if (answerData && answerData?.ok) reset();
+    mutate((data) => data, { revalidate: true });
+  }, [answerData, reset]);
 
   return (
     <Layout canGoBack>
@@ -130,7 +164,7 @@ const CommunityPostDetail: NextPage = () => {
           </div>
         </div>
         {data?.post?.Answers.map((element, i) => (
-          <div className="community-answer my-5 space-y-5 px-4">
+          <div className="community-answer my-5 space-y-5 px-4" key={i}>
             <div className="flex items-start space-x-3">
               <div className="h-8 w-8 rounded-full bg-slate-200" />
               <div>
@@ -138,7 +172,7 @@ const CommunityPostDetail: NextPage = () => {
                   {element.user.name}
                 </span>
                 <span className="block text-xs text-gray-500 ">
-                  {element.createdAt.toDateString()}
+                  {element.createdAt.toString()}
                 </span>
                 <p className="mt-2 text-gray-700">{element.content}</p>
               </div>
@@ -146,11 +180,18 @@ const CommunityPostDetail: NextPage = () => {
           </div>
         ))}
 
-        <div className="mt-5 px-4">
-          <Textarea placeholder="Answer this question!" rows={10} />
+        <form
+          onSubmit={handleSubmit(onValidAnswer, onInvalidAnswer)}
+          className="mt-5 px-4"
+        >
+          <Textarea
+            register={register("answer", { required: true })}
+            placeholder="Answer this question!"
+            rows={4}
+          />
 
-          <ButtonDefault text="Reply" />
-        </div>
+          <ButtonDefault text={answerLoading ? "loading..." : "Reply"} />
+        </form>
       </div>
     </Layout>
   );

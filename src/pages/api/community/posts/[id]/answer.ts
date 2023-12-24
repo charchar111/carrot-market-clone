@@ -10,20 +10,17 @@ async function handler(
   const {
     query: { id },
     session: { user },
+    body: { answer },
   } = req;
-  if (!id) return res.status(401).json({ ok: false });
-  const aleadyExist = await client.wondering.findFirst({
-    where: { postId: +id.toString(), userId: user?.id },
-    select: { id: true },
+  if (!id || !answer) return res.status(401).json({ ok: false });
+
+  const post = await client.post.findUnique({ where: { id: +id.toString() } });
+  if (!post) return res.status(404).json({ ok: false });
+
+  await client.answer.create({
+    data: { content: answer, userId: user?.id!, postId: +id.toString() },
   });
 
-  if (aleadyExist) {
-    await client.wondering.delete({ where: { id: aleadyExist.id } });
-  } else {
-    await client.wondering.create({
-      data: { postId: +id.toString(), userId: user?.id! },
-    });
-  }
   return res.status(200).json({ ok: true });
 }
 
