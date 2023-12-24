@@ -32,4 +32,5 @@ interface PostWithUser extends Post {
 
 export interface IResponsePostDetail extends IResponse {
   post?: PostWithUser;
+  isAlreadyWonder: boolean;
 }

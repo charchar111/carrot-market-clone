@@ -8,7 +8,10 @@ async function handler(
   res: NextApiResponse<ResponseType>,
 ): Promise<any> {
   if (req.method === "GET") {
-    const { id } = req.query;
+    const {
+      query: { id },
+      session: { user },
+    } = req;
     if (!id) return res.status(401).json({ ok: false });
     const post = await client.post.findUnique({
       where: { id: +id.toString() },
@@ -25,11 +28,16 @@ async function handler(
         },
       },
     });
+    const isAlreadyWonder = Boolean(
+      await client.wondering.findFirst({
+        where: { userId: user?.id, postId: +id.toString() },
+      }),
+    );
     if (!post)
       return res
         .status(404)
         .json({ ok: false, error: { message: "post is not found." } });
-    return res.status(201).json({ ok: true, post });
+    return res.status(201).json({ ok: true, post, isAlreadyWonder });
   }
 }
 

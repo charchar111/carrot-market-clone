@@ -1,6 +1,8 @@
 import ButtonDefault from "@/components/button";
 import { Layout } from "@/components/layouts";
 import Textarea from "@/components/textarea";
+import useMutation from "@/libs/client/useMutation";
+import { makeClassName } from "@/libs/client/utils";
 import { IResponse, IResponsePostDetail } from "@/libs/types";
 import type { NextPage } from "next";
 import Link from "next/link";
@@ -10,9 +12,39 @@ import useSWR from "swr";
 
 const CommunityPostDetail: NextPage = () => {
   const router = useRouter();
-  const { data, error, isLoading } = useSWR<IResponsePostDetail>(
+  const { data, error, isLoading, mutate } = useSWR<IResponsePostDetail>(
     router.query.id ? `/api/community/posts/${router.query.id}` : null,
   );
+
+  const [
+    mutationWondering,
+    { data: wonderData, error: wonderError, loading: wonrderLoading },
+  ] = useMutation(`/api/community/posts/${router.query.id}/wondering`);
+
+  const onClickWonder = function () {
+    mutationWondering({});
+    mutate(
+      (data) => {
+        if (!data) return data;
+        if (data.post?._count.Wonderings == undefined) return data;
+        return {
+          ...data,
+          post: {
+            ...data.post,
+            _count: {
+              ...data.post?._count,
+              Wonderings: data.isAlreadyWonder
+                ? data.post?._count.Wonderings - 1
+                : data.post?._count.Wonderings + 1,
+            },
+          },
+          isAlreadyWonder: !data.isAlreadyWonder,
+        };
+      },
+      { revalidate: false },
+    );
+  };
+
   useEffect(() => {
     console.log(data);
     if (!data) return;
@@ -47,7 +79,13 @@ const CommunityPostDetail: NextPage = () => {
             <p className="mt-4 px-4 text-gray-700">{data?.post?.content}</p>
           </div>
           <div className="mt-3 flex w-full space-x-5 border-b-[2px] border-t px-4 py-2.5  text-gray-700">
-            <span className="flex items-center space-x-2 text-sm">
+            <button
+              className={makeClassName(
+                "flex cursor-pointer items-center space-x-2 text-sm",
+                data?.isAlreadyWonder ? "text-orange-600" : "",
+              )}
+              onClick={onClickWonder}
+            >
               <svg
                 className="h-4 w-4"
                 fill="none"
@@ -68,7 +106,7 @@ const CommunityPostDetail: NextPage = () => {
                   ? data?.post?._count.Wonderings
                   : 0}
               </span>
-            </span>
+            </button>
             <span className="flex items-center space-x-2 text-sm">
               <svg
                 className="h-4 w-4"
