@@ -1,20 +1,27 @@
 import FloatingButtonLink from "@/components/floating-button-link";
 import { Layout } from "@/components/layouts";
+import useCoord from "@/libs/client/useCoords";
 import { IResponseCommunityPostsAll } from "@/libs/types";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 
 export default function Community() {
+  const { latitude, longitude } = useCoord();
+
   const { data, error, isLoading } = useSWR<IResponseCommunityPostsAll>(
-    "/api/community/posts",
+    latitude && longitude
+      ? `/api/community/posts?latitude=${latitude}&longitude=${longitude}`
+      : `/api/community/posts`,
   );
+
   const router = useRouter();
-  console.log(data);
+  console.log(latitude, longitude, router, data);
+  // console.log(data);
   return (
     <Layout title="동네 생활" hasTabBar>
       <div id="community-index" className="space-y-14 px-3 pt-5">
-        {data?.posts.map((post, i) => (
+        {data?.posts?.map((post, i) => (
           <div key={i}>
             <Link href={`community/${post.id}`}>
               <div className="space-y-3">

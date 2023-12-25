@@ -74,6 +74,8 @@ model Post {
   userId     Int
   title      String
   content    String      @db.MediumText
+  latitude   Float?
+  longitude  Float?
   Answers    Answer[]
   Wonderings Wondering[]
 

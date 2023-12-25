@@ -2,6 +2,7 @@ import ButtonDefault from "@/components/button";
 import Input from "@/components/input";
 import { Layout } from "@/components/layouts";
 import Textarea from "@/components/textarea";
+import useCoord from "@/libs/client/useCoords";
 import useMutation from "@/libs/client/useMutation";
 import { IFormCommunityWrite, IResponseCommunityWrite } from "@/libs/types";
 import type { NextPage } from "next";
@@ -10,6 +11,8 @@ import { useEffect } from "react";
 import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
 
 const Write: NextPage = () => {
+  const { latitude, longitude } = useCoord();
+
   const {
     register,
     handleSubmit,
@@ -24,7 +27,7 @@ const Write: NextPage = () => {
   const onValid: SubmitHandler<IFormCommunityWrite> = function (formData) {
     if (loading) return;
     if (data) return;
-    mutationPost(formData);
+    mutationPost({ ...formData, latitude, longitude });
   };
   const onInvalid = function (error: FieldErrors) {
     console.log(error);
