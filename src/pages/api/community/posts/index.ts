@@ -7,12 +7,14 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>,
 ): Promise<any> {
-  //   if (req.method === "GET") {
-  //     const products = await client.product.findMany({
-  //       include: { _count: { select: { Favorites: true } } },
-  //     });
-  //     return res.status(200).json({ ok: true, products });
-  //   }
+  if (req.method === "GET") {
+    const posts = await client.post.findMany({
+      where: {},
+
+      include: { _count: true, user: { select: { id: true, name: true } } },
+    });
+    return res.status(200).json({ ok: true, posts });
+  }
 
   if (req.method === "POST") {
     const {
@@ -31,18 +33,10 @@ async function handler(
     });
     console.log("post", post);
 
-    // const products = await client.product.create({
-    //   data: {
-    //     name,
-    //     price: +price,
-    //     description,
-    //     user: { connect: { id: user?.id } },
-    //     image: "",
-    //   },
-    // });
-
     return res.status(201).json({ ok: true, post: { id: post.id } });
   }
 }
 
-export default withApiSession(withHandler({ methods: ["POST"], handler }));
+export default withApiSession(
+  withHandler({ methods: ["POST", "GET"], handler }),
+);

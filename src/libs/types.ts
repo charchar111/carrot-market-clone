@@ -40,3 +40,12 @@ export interface IFormCommunityAnswer {
 }
 
 export interface IResponseAnswerData extends IResponse {}
+
+interface PostWithRelation extends Post {
+  _count: { Answers: number; Wonderings: number };
+  user: { id: number; name: string };
+}
+
+export interface IResponseCommunityPostsAll extends IResponse {
+  posts: PostWithRelation[];
+}

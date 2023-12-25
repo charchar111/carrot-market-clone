@@ -27,6 +27,7 @@ const CommunityPostDetail: NextPage = () => {
   const { data, error, isLoading, mutate } = useSWR<IResponsePostDetail>(
     router.query.id ? `/api/community/posts/${router.query.id}` : null,
   );
+  console.log(data);
 
   const [
     mutationWondering,
@@ -82,7 +83,7 @@ const CommunityPostDetail: NextPage = () => {
 
   useEffect(() => {
     if (answerData && answerData?.ok) reset();
-    mutate((data) => data, { revalidate: true });
+    mutate();
   }, [answerData, reset]);
 
   return (

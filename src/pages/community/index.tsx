@@ -1,14 +1,22 @@
 import FloatingButtonLink from "@/components/floating-button-link";
 import { Layout } from "@/components/layouts";
+import { IResponseCommunityPostsAll } from "@/libs/types";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 
 export default function Community() {
+  const { data, error, isLoading } = useSWR<IResponseCommunityPostsAll>(
+    "/api/community/posts",
+  );
+  const router = useRouter();
+  console.log(data);
   return (
     <Layout title="동네 생활" hasTabBar>
       <div id="community-index" className="space-y-14 px-3 pt-5">
-        {[...Array(10)].map((_, i) => (
+        {data?.posts.map((post, i) => (
           <div key={i}>
-            <Link href={`community/${i}`}>
+            <Link href={`community/${post.id}`}>
               <div className="space-y-3">
                 <p className=" w-max rounded-3xl bg-gray-100 p-1 px-2">
                   동네질문
@@ -18,12 +26,19 @@ export default function Community() {
                     Q.
                   </span>
                   <span className="inline-block pb-4 text-lg font-semibold">
-                    What is the best mandu restaurant?
+                    {post.title}
                   </span>
                 </div>
                 <div className="flex justify-between text-gray-400 ">
-                  <span>니꼬</span>
-                  <span>18시간 전</span>
+                  <span
+                    onClick={() =>
+                      router.push(`/users/profiles/${post.user.id}`)
+                    }
+                  >
+                    {post.user.name}
+                  </span>
+
+                  <span>{post.createdAt.toString()}</span>
                 </div>
                 <div className="flex space-x-10 border-b-2 border-t-2 py-3">
                   <div className="flex items-center space-x-2">
@@ -41,7 +56,7 @@ export default function Community() {
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       ></path>
                     </svg>
-                    <span>궁금해요 1</span>
+                    <span>궁금해요 {post._count.Wonderings}</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <svg
@@ -58,7 +73,7 @@ export default function Community() {
                         d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                       ></path>
                     </svg>
-                    <span>답변 1</span>
+                    <span>답변 {post._count.Answers}</span>
                   </div>
                 </div>
               </div>
