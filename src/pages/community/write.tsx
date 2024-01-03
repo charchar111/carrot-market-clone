@@ -35,7 +35,7 @@ const Write: NextPage = () => {
 
   useEffect(() => {
     console.log(data);
-    if (data?.ok) router.push(`/community/${data.post?.id}`);
+    if (data?.ok) router.replace(`/community/${data.post?.id}`);
     // 성공 응답 시, 생성된 post로 이동
   }, [data, router]);
 

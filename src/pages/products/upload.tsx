@@ -33,11 +33,11 @@ export default function UploadDetail() {
   const [mutationProduct, { data, error, loading }] =
     useMutation<IResponseProduct>("/api/products");
 
-  const onValid: SubmitHandler<IUploadProduct> = function (data) {
-    console.log(data);
+  const onValid: SubmitHandler<IUploadProduct> = function (formData) {
+    console.log(formData);
     if (loading) return;
 
-    mutationProduct(data);
+    mutationProduct(formData);
   };
   const onInvalid = function (error: FieldErrors) {
     console.log(error);
@@ -45,7 +45,7 @@ export default function UploadDetail() {
 
   useEffect(() => {
     if (data?.ok) {
-      router.push(`/products/${data.product.id}`);
+      router.replace(`/products/${data.product.id}`);
     }
   }, [data, router]);
 

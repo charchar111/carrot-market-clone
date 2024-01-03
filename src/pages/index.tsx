@@ -6,11 +6,12 @@ import { IResponse } from "@/libs/types";
 import { Product } from "@prisma/client";
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 
 interface ProductWithCount extends Product {
-  _count: { Favorites: number };
+  _count: { Records: number };
 }
 
 interface ResponseProduct extends IResponse {
@@ -18,17 +19,20 @@ interface ResponseProduct extends IResponse {
 }
 
 const Home: NextPage = () => {
-  const { user, isLoading } = useUser();
+  const [authorized, setAuthorized] = useState();
   const {
     data,
     error,
     isLoading: isLoadingProduct,
-  } = useSWR<ResponseProduct>("/api/products");
-  console.log(data);
-  // console.log(user);
+  } = useSWR<ResponseProduct>(authorized ? "/api/products" : null);
 
+  // console.log(authorized);
   return (
-    <Layout title="홈" hasTabBar>
+    <Layout
+      title="홈"
+      hasTabBar
+      authorize={{ user: true, resultState: [authorized, setAuthorized] }}
+    >
       <Head>
         <title>Home</title>
       </Head>
@@ -39,8 +43,8 @@ const Home: NextPage = () => {
             title={product.name}
             price={product.price}
             id={product.id}
-            comment={product._count?.Favorites}
-            heart={3}
+            comment={1}
+            heart={product._count?.Records}
           >
             <span className="mb-2 text-xs text-gray-400">Black</span>
           </Item>

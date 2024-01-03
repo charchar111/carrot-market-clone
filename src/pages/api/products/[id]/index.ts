@@ -29,7 +29,6 @@ async function handler(
       contains: word,
     },
   }));
-  // console.log(terms);
 
   let relatedProducts;
   if (terms) {
@@ -42,8 +41,9 @@ async function handler(
   let isLiked;
   if (user && product) {
     isLiked = Boolean(
-      await client.favorite.findFirst({
+      await client.record.findFirst({
         where: {
+          kind: "FAVORITE",
           productId: product.id,
           userId: user?.id,
         },

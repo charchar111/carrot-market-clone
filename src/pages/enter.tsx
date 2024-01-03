@@ -7,6 +7,7 @@ import { IResponse } from "@/libs/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
+import { useSWRConfig } from "swr";
 
 interface EnterForm {
   email?: string;
@@ -26,10 +27,12 @@ export default function Enter() {
     { loading: tokenLoading, data: tokenData, error: tokenError },
   ] = useMutation<IResponse>("/api/users/confirm");
 
+  const { mutate: mutateUnboundSWR } = useSWRConfig();
+
   const { register, handleSubmit, reset } = useForm<EnterForm>();
   const { register: tokenRegister, handleSubmit: tokenHandleSubmit } =
     useForm<TokenForm>();
-  console.log("mutation", loading, data, error);
+  // console.log("mutation", loading, data, error);
 
   const onValid = function (validForm: EnterForm) {
     enter(validForm);
@@ -39,10 +42,19 @@ export default function Enter() {
   };
 
   const onTokenValid = function (validForm: TokenForm) {
-    console.log(validForm);
     if (tokenLoading) return;
     tokenEnter(validForm);
   };
+
+  useEffect(() => {
+    // console.log("tokenData", tokenData);
+    if (tokenData?.ok)
+      mutateUnboundSWR("/api/users/me", (data: any) => ({
+        ok: true,
+        error: undefined,
+      }));
+  }, [tokenData]);
+
   const onTokenInvalid = function (error: FieldErrors) {
     console.log(error);
   };
@@ -62,8 +74,20 @@ export default function Enter() {
     if (tokenData?.ok) router.push("/");
   }, [tokenData]);
 
+  const [authorized, setAuthorized] = useState<any>();
+
+  useEffect(() => {
+    console.log(authorized);
+    if (authorized) router.replace(`/profile/${authorized.id}`);
+  }, [authorized]);
+
   return (
-    <Layout title="로그인" hasTabBar canGoBack>
+    <Layout
+      title="로그인"
+      hasTabBar
+      canGoBack
+      authorize={{ user: true, resultState: [authorized, setAuthorized] }}
+    >
       <div className="mx-auto  min-w-[250px] space-y-5 px-3  py-10 text-center   ">
         <h3 className="text-2xl font-semibold">Enter to Carrot</h3>
         <div className=" relative flex flex-col items-center space-y-5 text-center">
