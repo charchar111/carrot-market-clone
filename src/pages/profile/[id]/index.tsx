@@ -2,6 +2,7 @@ import { Layout } from "@/components/layouts";
 import useUser from "@/libs/client/useUser";
 import type { NextPage } from "next";
 import Link from "next/link";
+import useSWR from "swr";
 
 const Profile: NextPage = () => {
   return (

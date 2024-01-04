@@ -16,7 +16,7 @@ export default function FloatingButtonLink({
     <div
       className={makeClassName(
         "pointer-events-none fixed inset-x-0",
-        !bottom ? "bottom-20" : `bottom-${bottom}`,
+        "bottom-[5rem]",
         "z-10 mx-auto flex max-w-lg justify-end",
       )}
       //  "pointer-events-none fixed inset-x-0 bottom-20 z-10 mx-auto flex max-w-lg justify-end"

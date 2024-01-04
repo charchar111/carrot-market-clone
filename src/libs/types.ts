@@ -1,4 +1,4 @@
-import { Answer, Post, User } from "@prisma/client";
+import { Answer, Post, Product, Review, User } from "@prisma/client";
 
 export interface IResponse {
   ok: boolean | undefined;
@@ -48,4 +48,20 @@ interface PostWithRelation extends Post {
 
 export interface IResponseCommunityPostsAll extends IResponse {
   posts: PostWithRelation[];
+}
+
+export interface IResponseProfile extends IResponse {
+  profile: User;
+}
+
+export interface IResponseReviews extends IResponse {
+  reviews: ReviewWithCreateByUser[];
+}
+
+export interface ReviewWithCreateByUser extends Review {
+  CreatedBy: { avatar: string | null; id: number; name: string };
+}
+
+export interface ProductWithCount extends Product {
+  _count: { Records: number };
 }

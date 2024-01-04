@@ -1,26 +1,20 @@
 import FloatingButtonLink from "@/components/floating-button-link";
 import Item from "@/components/item";
+import ItemProductRecord from "@/components/item-product-record";
 import { Layout } from "@/components/layouts";
+import { IResponse, ProductWithCount } from "@/libs/types";
+import { Product, Record } from "@prisma/client";
 import Link from "next/link";
+import useSWR from "swr";
 
 export default function profileSell() {
+  // console.log(data, isLoading);
   return (
     <Layout canGoBack>
       <div>
-        {[...Array(14)].map((_, i) => (
-          <Item
-            key={i}
-            title="New iPhone 14"
-            price={95}
-            id={i}
-            comment={2}
-            heart={3}
-          >
-            <span className="mb-2 text-xs text-gray-400">Black</span>
-          </Item>
-        ))}
+        <ItemProductRecord kind="sale" />
 
-        <FloatingButtonLink href="/products/upload" bottom="10">
+        <FloatingButtonLink href="/products/upload">
           <svg
             className="h-6 w-6"
             xmlns="http://www.w3.org/2000/svg"

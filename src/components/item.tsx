@@ -5,18 +5,11 @@ interface ItemProps {
   children?: React.ReactNode;
   price: number;
   id: number;
-  comment: number;
+  // comment: number;
   heart: number;
 }
 
-export default function Item({
-  children,
-  title,
-  price,
-  id,
-  comment,
-  heart,
-}: ItemProps) {
+export default function Item({ children, title, price, id, heart }: ItemProps) {
   return (
     <div className=" row flex justify-between border-b-2 p-4 py-8" key={id}>
       <Link href={`/products/${id}`}>
@@ -48,7 +41,7 @@ export default function Item({
           </svg>
           <span>{heart}</span>
         </div>
-        <div className="column2__icon2 flex items-center  space-x-1 text-gray-500">
+        {/* <div className="column2__icon2 flex items-center  space-x-1 text-gray-500">
           <svg
             className="h-4 w-4"
             fill="none"
@@ -64,7 +57,7 @@ export default function Item({
             ></path>
           </svg>
           <span>{comment}</span>
-        </div>
+        </div> */}
       </div>
     </div>
   );

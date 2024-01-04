@@ -105,7 +105,7 @@ export const TabBar = function ({ authorizedId }: TabBarProps) {
           </Link>
         </li>
         <li>
-          <Link href={authorizedId ? `/profile/${authorizedId.id}` : "/enter"}>
+          <Link href={authorizedId ? `/profile` : "/enter"}>
             <div className="flex flex-col items-center space-y-1 ">
               <span>
                 <svg

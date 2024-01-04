@@ -1,5 +1,6 @@
 import FloatingButtonLink from "@/components/floating-button-link";
 import Item from "@/components/item";
+import ItemProductRecord from "@/components/item-product-record";
 import { Layout } from "@/components/layouts";
 import Link from "next/link";
 
@@ -7,18 +8,7 @@ export default function profileBuy() {
   return (
     <Layout canGoBack>
       <div>
-        {[...Array(14)].map((_, i) => (
-          <Item
-            key={i}
-            title="New iPhone 14"
-            price={95}
-            id={i}
-            comment={2}
-            heart={3}
-          >
-            <span className="mb-2 text-xs text-gray-400">Black</span>
-          </Item>
-        ))}
+        <ItemProductRecord kind="purchase" />
 
         <FloatingButtonLink href="/products/upload" bottom="10">
           <svg
