@@ -3,7 +3,7 @@ import Input from "@/components/input";
 import { Layout } from "@/components/layouts";
 import useMutation from "@/libs/client/useMutation";
 import { makeClassName } from "@/libs/client/utils";
-import { IResponse } from "@/libs/types";
+import { IResponse, globalProps } from "@/libs/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
@@ -18,7 +18,7 @@ interface TokenForm {
   token?: string;
 }
 
-export default function Enter() {
+export default function Enter({ user }: globalProps) {
   const [enter, { loading, data, error }] =
     useMutation<IResponse>("/api/users/enter");
 
@@ -86,7 +86,7 @@ export default function Enter() {
       title="로그인"
       hasTabBar
       canGoBack
-      authorize={{ user: true, resultState: [authorized, setAuthorized] }}
+      user={!user.isLoading && user.user ? user.user : undefined}
     >
       <div className="mx-auto  min-w-[250px] space-y-5 px-3  py-10 text-center   ">
         <h3 className="text-2xl font-semibold">Enter to Carrot</h3>

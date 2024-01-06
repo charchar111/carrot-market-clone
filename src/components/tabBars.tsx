@@ -1,11 +1,10 @@
 import Link from "next/link";
 
 interface TabBarProps {
-  authorizedId: any;
+  userId: number | undefined;
 }
 
-export const TabBar = function ({ authorizedId }: TabBarProps) {
-  console.log(authorizedId);
+export const TabBar = function ({ userId }: TabBarProps) {
   return (
     <nav className="fixed bottom-0 w-full max-w-lg border-t bg-white p-4 py-3 text-gray-600">
       <ul className="flex  flex-wrap justify-around space-x-2">
@@ -105,7 +104,7 @@ export const TabBar = function ({ authorizedId }: TabBarProps) {
           </Link>
         </li>
         <li>
-          <Link href={authorizedId ? `/profile` : "/enter"}>
+          <Link href={userId ? `/profile` : "/enter"}>
             <div className="flex flex-col items-center space-y-1 ">
               <span>
                 <svg

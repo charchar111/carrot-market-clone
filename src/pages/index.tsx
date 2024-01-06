@@ -2,12 +2,11 @@ import FloatingButtonLink from "@/components/floating-button-link";
 import Item from "@/components/item";
 import { Layout } from "@/components/layouts";
 import useUser from "@/libs/client/useUser";
-import { IResponse } from "@/libs/types";
-import { Product } from "@prisma/client";
+import { IResponse, globalProps } from "@/libs/types";
+import { Product, User } from "@prisma/client";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import useSWR from "swr";
 
 interface ProductWithCount extends Product {
@@ -18,20 +17,19 @@ interface ResponseProduct extends IResponse {
   products: ProductWithCount[];
 }
 
-const Home: NextPage = () => {
-  const [authorized, setAuthorized] = useState();
+const RootHome: NextPage<globalProps> = ({ user }) => {
+  // console.log("user", user);
   const {
     data,
     error,
     isLoading: isLoadingProduct,
-  } = useSWR<ResponseProduct>(authorized ? "/api/products" : null);
+  } = useSWR<ResponseProduct>(user ? "/api/products" : null);
 
-  // console.log(authorized);
   return (
     <Layout
       title="홈"
       hasTabBar
-      authorize={{ user: true, resultState: [authorized, setAuthorized] }}
+      user={!user.isLoading && user.user ? user.user : undefined}
     >
       <Head>
         <title>Home</title>
@@ -43,7 +41,7 @@ const Home: NextPage = () => {
             title={product.name}
             price={product.price}
             id={product.id}
-            comment={1}
+            // comment={1}
             heart={product._count?.Records}
           >
             <span className="mb-2 text-xs text-gray-400">Black</span>
@@ -71,4 +69,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default RootHome;

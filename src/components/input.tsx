@@ -39,7 +39,7 @@ export default function Input({
         <input
           id={name ? name : undefined}
           type="text"
-          className="mb-5 w-full rounded-md border-gray-400 focus:border-orange-400 focus:ring-orange-400"
+          className="mb-5 w-full appearance-none rounded-sm border-gray-200  p-2 placeholder-gray-400 shadow-sm  placeholder:text-gray-300 focus:border-orange-400 focus:ring-orange-400"
           placeholder="Write a title"
           {...register}
           {...rest}
@@ -53,7 +53,6 @@ export default function Input({
           type="email"
           placeholder="abcd123@naver.com"
           className="mb-5 w-full appearance-none rounded-sm border-gray-200  p-2 placeholder-gray-400 shadow-sm  placeholder:text-gray-300 focus:border-orange-400 focus:ring-orange-400"
-          required
           {...register}
           {...rest}
         />
@@ -69,7 +68,6 @@ export default function Input({
             id={name ? name : undefined}
             type="tel"
             className="w-full rounded-sm rounded-l-none border-gray-200 shadow-sm placeholder:text-gray-300 focus:border-orange-400 focus:ring-orange-400"
-            required
             {...register}
             placeholder="01012345678"
             {...rest}

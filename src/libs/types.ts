@@ -2,6 +2,7 @@ import { Answer, Post, Product, Review, User } from "@prisma/client";
 
 export interface IResponse {
   ok: boolean | undefined;
+  error?: { message: string };
 }
 
 export interface IFormCommunityWrite {
@@ -64,4 +65,8 @@ export interface ReviewWithCreateByUser extends Review {
 
 export interface ProductWithCount extends Product {
   _count: { Records: number };
+}
+
+export interface globalProps {
+  user: { user: User | undefined; isLoading: boolean };
 }

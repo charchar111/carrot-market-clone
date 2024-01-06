@@ -6,18 +6,17 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import useSWR from "swr";
 
-const Profile: NextPage = () => {
-  const { user, isLoading, error } = useUser();
+const Profile: NextPage = ({ user: { user, isLoading } }: any) => {
   const { data: dataReview } = useSWR<IResponseReviews>("/api/users/reviews");
-  console.log(user, isLoading, dataReview);
+
   return (
-    <Layout canGoBack>
+    <Layout canGoBack user={!isLoading && user ? user : undefined}>
       <div id="profile-index" className="px-4 py-10">
         <div className="head mb-10 flex items-center space-x-2">
           <div className="h-16 w-16 rounded-full bg-gray-500" />
           <div className="flex flex-col">
             <span className="font-semibold">{user?.name}</span>
-            <Link href={`/profile/0/edit`}>
+            <Link href={`/profile/edit`}>
               <span className=" cursor-pointer text-gray-700 opacity-80 hover:opacity-100">
                 Edit profile
               </span>

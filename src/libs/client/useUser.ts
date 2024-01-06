@@ -1,16 +1,21 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import useSWR from "swr";
-import { IResponse, IResponseProfile } from "../types";
-
-// const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { useEffect } from "react";
+import useSWR, { BareFetcher } from "swr";
+import { IResponseProfile } from "../types";
+import { PublicConfiguration } from "swr/_internal";
+import { globalFetcher } from "@/pages/_app";
 
 export default function useUser() {
-  const { data, isLoading, error } = useSWR<IResponseProfile>("/api/users/me");
+  const { data, isLoading } = useSWR<IResponseProfile>(
+    "/api/users/me",
+    globalFetcher,
+  );
+
   const router = useRouter();
   useEffect(() => {
-    if (data && !data.ok) router.replace("/enter");
-  }, [data]);
+    if (data && !data.ok && router.pathname !== "/enter")
+      router.replace("/enter");
+  }, [data, isLoading, router]);
 
-  return { user: data?.profile, isLoading: isLoading, error };
+  return { user: data?.profile, isLoading: isLoading };
 }

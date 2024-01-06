@@ -4,16 +4,14 @@ import { TabBar } from "./tabBars";
 import { totalmem } from "os";
 import { makeClassName } from "@/libs/client/utils";
 import useUser from "@/libs/client/useUser";
+import { User } from "@prisma/client";
 
 interface LayoutProps {
   title?: string;
   canGoBack?: boolean;
   hasTabBar?: boolean;
   children: React.ReactNode;
-  authorize?: {
-    user: boolean;
-    resultState?: [any, React.Dispatch<React.SetStateAction<any>>];
-  };
+  user: User | undefined;
 }
 
 export const Layout = function ({
@@ -21,21 +19,8 @@ export const Layout = function ({
   canGoBack,
   hasTabBar,
   children,
-  authorize = { user: true },
+  user,
 }: LayoutProps) {
-  const { user, isLoading } = useUser();
-
-  useEffect(() => {
-    if (authorize.resultState && !isLoading) {
-      const [authorized, setAuthorized] = authorize.resultState;
-
-      setAuthorized((date: any) => {
-        if (user) return user;
-        return undefined;
-      });
-    }
-  }, [user]);
-
   return (
     <div className="outter-layout min-h-screen bg-gray-100">
       <div className="layout mx-auto min-h-screen  max-w-lg bg-white">
@@ -43,7 +28,7 @@ export const Layout = function ({
         <div className={makeClassName("pt-14", hasTabBar ? "pb-16" : "")}>
           {children}
         </div>
-        {hasTabBar ? <TabBar authorizedId={user} /> : null}
+        {hasTabBar ? <TabBar userId={user?.id} /> : null}
       </div>
     </div>
   );
