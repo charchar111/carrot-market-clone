@@ -3,7 +3,7 @@ import Input from "@/components/input";
 import { Layout } from "@/components/layouts";
 import Textarea from "@/components/textarea";
 import useMutation from "@/libs/client/useMutation";
-import { IResponse } from "@/libs/types";
+import { IResponse, globalProps } from "@/libs/types";
 import { Product } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -21,7 +21,9 @@ interface IResponseProduct extends IResponse {
   product: Product;
 }
 
-export default function UploadDetail() {
+export default function UploadDetail({
+  user: { user, isLoading },
+}: globalProps) {
   const router = useRouter();
 
   const {
@@ -50,7 +52,7 @@ export default function UploadDetail() {
   }, [data, router]);
 
   return (
-    <Layout canGoBack>
+    <Layout canGoBack user={!isLoading && user ? user : undefined}>
       <div className="px-4 py-16">
         <form onSubmit={handleSubmit(onValid, onInvalid)}>
           <div>

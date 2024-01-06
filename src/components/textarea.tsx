@@ -20,7 +20,7 @@ export default function Textarea({
           className={makeClassName(
             "mb-2",
             `h-${height ? [height] : 64}`,
-            "w-full resize-none rounded-md border-gray-400",
+            "w-full resize-none rounded-sm border-gray-200 shadow-sm",
           )}
           {...register}
           {...rest}
@@ -32,7 +32,7 @@ export default function Textarea({
             className={makeClassName(
               "mb-2",
               `h-${height ? [height] : 64}`,
-              "w-full resize-none rounded-md border-gray-400",
+              "w-full resize-none rounded-sm border-gray-200 shadow-sm",
             )}
             {...register}
             {...rest}

@@ -1,23 +1,37 @@
 import FloatingButtonLink from "@/components/floating-button-link";
 import { Layout } from "@/components/layouts";
+import { IResponse, globalProps } from "@/libs/types";
+import { Stream } from "@prisma/client";
 import Link from "next/link";
+import useSWR from "swr";
 
-export default function Lives() {
+interface IResponseLives extends IResponse {
+  lives?: Stream[];
+}
+
+export default function Lives({ user: { isLoading, user } }: globalProps) {
+  const { data, isLoading: isLoadingLives } =
+    useSWR<IResponseLives>("api/lives");
+
   return (
-    <Layout title="스트리밍" hasTabBar>
+    <Layout
+      title="스트리밍"
+      hasTabBar
+      user={!isLoading && user ? user : undefined}
+    >
       <div id="component-lives">
         <section className="live-list space-y-6 ">
-          {Array.from(Array(10)).map((_, i) => (
+          {data?.lives?.map((element, i) => (
             <div
               key={i}
               className="list__element  border-b-2    last:border-b-0 "
             >
-              <Link href={`/lives/${i}`}>
+              <Link href={`/lives/${element.id}`}>
                 <div className="mt-5 px-4 pb-10">
                   <div className="video mb-2 aspect-video rounded-lg bg-gray-400"></div>
                   <div className="info">
                     <h2 className="text-lg font-semibold text-gray-800">
-                      We want happy
+                      {element.name}
                     </h2>
                   </div>
                 </div>

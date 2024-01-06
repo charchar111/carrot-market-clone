@@ -28,9 +28,9 @@ export default function Input({
             className=" w-full  rounded-md border-gray-400 pr-10 shadow-lg"
             {...rest}
           />
-          <div className="absolute right-1 rounded-full bg-orange-400  px-2 pb-1 text-white">
+          <button className="absolute right-1 rounded-full bg-orange-400  px-2 pb-1 text-white">
             <span>&rarr;</span>
-          </div>
+          </button>
         </>
       );
       break;
@@ -85,7 +85,7 @@ export default function Input({
 
           <input
             type="text"
-            className="w-full rounded-md border-gray-400 pl-8 focus:border-orange-400 focus:ring-orange-400"
+            className="w-full appearance-none rounded-sm border border-gray-200 px-3 py-2 pl-7 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500"
             {...register}
             {...rest}
           />

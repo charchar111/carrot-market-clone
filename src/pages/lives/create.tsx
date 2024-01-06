@@ -1,54 +1,85 @@
 import ButtonDefault from "@/components/button";
+import Input from "@/components/input";
 import { Layout } from "@/components/layouts";
 import Textarea from "@/components/textarea";
+import useMutation from "@/libs/client/useMutation";
+import { IResponse, globalProps } from "@/libs/types";
+import { Stream } from "@prisma/client";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
 
-export default function LivesCreate() {
+interface ICreateLive {
+  price: string;
+  description: string;
+  name: string;
+  // image: string;
+}
+
+interface IResponseLive extends IResponse {
+  live: Stream;
+}
+
+export default function LivesCreate({
+  user: { user, isLoading },
+}: globalProps) {
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors: formError },
+  } = useForm<ICreateLive>({ reValidateMode: "onSubmit" });
+
+  const [mutationLive, { data, error, loading }] =
+    useMutation<IResponseLive>("/api/lives");
+
+  const onValid: SubmitHandler<ICreateLive> = function (formData) {
+    console.log(formData);
+    if (loading) return;
+
+    mutationLive(formData);
+  };
+  const onInvalid = function (error: FieldErrors) {
+    // console.log(error);
+  };
+
+  useEffect(() => {
+    if (data && data?.ok) {
+      router.push(`/lives/${data.live.id}`);
+    }
+  }, [data, router]);
+
   return (
-    <Layout canGoBack>
-      <div className=" space-y-5 px-4">
-        <div>
-          <label
-            className="mb-1 block text-sm font-medium text-gray-700"
-            htmlFor="name"
-          >
-            Name
-          </label>
-          <div className="relative flex items-center  rounded-md shadow-sm">
-            <input
-              id="name"
-              type="email"
-              className="w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500"
-              required
-            />
-          </div>
-        </div>
-        <div>
-          <label
-            className="mb-1 block text-sm font-medium text-gray-700"
-            htmlFor="price"
-          >
-            Price
-          </label>
-          <div className="relative flex items-center  rounded-md shadow-sm">
-            <div className="pointer-events-none absolute left-0 flex items-center justify-center pl-3">
-              <span className="text-sm text-gray-500">$</span>
-            </div>
-            <input
-              id="price"
-              className="w-full appearance-none rounded-md border border-gray-300 px-3 py-2 pl-7 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500"
-              type="text"
-              placeholder="0.00"
-            />
-            <div className="pointer-events-none absolute right-0 flex items-center pr-3">
-              <span className="text-gray-500">USD</span>
-            </div>
-          </div>
-        </div>
-        <div>
-          <Textarea label="Description" rows={4} name="textarea-live-create" />
-        </div>
+    <Layout canGoBack user={!isLoading && user ? user : undefined}>
+      <form
+        className=" space-y-5 px-4"
+        onSubmit={handleSubmit(onValid, onInvalid)}
+      >
+        <Input
+          label="Name"
+          kind="text"
+          register={register("name", { required: "이름, 가격은 필수입니다." })}
+        />
+        <Input
+          label="Price"
+          kind="price"
+          placeholder="0.00"
+          register={register("price", {
+            required: "이름, 가격은 필수입니다.",
+            valueAsNumber: true,
+          })}
+        />
+        <Textarea
+          label="Description"
+          rows={4}
+          register={register("description")}
+        />
+        <p className="font-bold text-red-500">
+          {formError.name?.message || formError.price?.message}
+        </p>
         <ButtonDefault text="Go live" />
-      </div>
+      </form>
     </Layout>
   );
 }
