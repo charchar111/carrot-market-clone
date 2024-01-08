@@ -3,14 +3,27 @@ import withHandler, { ResponseType } from "@/libs/server/withHandler";
 import { NextApiRequest, NextApiResponse } from "next";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { withApiSession } from "@/libs/server/withSession";
+import { ITEM_PER_PAGE } from "@/libs/constant";
 
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>,
 ): Promise<any> {
   if (req.method === "GET") {
-    const lives = await client.stream.findMany({});
-    return res.status(200).json({ ok: true, lives });
+    const { page } = req.query;
+
+    if (!page || isNaN(Number(page)) || +page < 1 || +page % 1 !== 0)
+      return res.status(400).json({ ok: false });
+
+    const countTotalLive = await client.stream.count({});
+    console.log("page", page, countTotalLive);
+
+    const lives = await client.stream.findMany({
+      take: ITEM_PER_PAGE,
+      skip: (+page.toString() - 1) * ITEM_PER_PAGE,
+      orderBy: { id: "asc" },
+    });
+    return res.status(200).json({ ok: true, lives, countTotalLive });
   }
 
   if (req.method === "POST") {

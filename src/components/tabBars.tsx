@@ -81,7 +81,7 @@ export const TabBar = function ({ userId }: TabBarProps) {
           </Link>
         </li>
         <li>
-          <Link href="/lives">
+          <Link href="/lives?page=1">
             <div className="flex flex-col items-center space-y-1 ">
               <span>
                 <svg

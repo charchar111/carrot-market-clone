@@ -1,4 +1,4 @@
-import ItemProfieReview from "@/components/item-profile-review";
+import ItemProfieReview from "@/components/list-item/profile-review";
 import { Layout } from "@/components/layouts";
 import useUser from "@/libs/client/useUser";
 import { IResponseProfile, IResponseReviews } from "@/libs/types";

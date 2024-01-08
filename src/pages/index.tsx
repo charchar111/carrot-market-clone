@@ -1,5 +1,5 @@
 import FloatingButtonLink from "@/components/floating-button-link";
-import Item from "@/components/item";
+import Item from "@/components/list-item/product";
 import { Layout } from "@/components/layouts";
 import useUser from "@/libs/client/useUser";
 import { IResponse, globalProps } from "@/libs/types";

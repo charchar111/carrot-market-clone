@@ -1,17 +1,25 @@
 import FloatingButtonLink from "@/components/floating-button-link";
 import { Layout } from "@/components/layouts";
+import ListItemLives from "@/components/list-item/lives";
+import Pagination from "@/components/pagination";
 import { IResponse, globalProps } from "@/libs/types";
 import { Stream } from "@prisma/client";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 interface IResponseLives extends IResponse {
   lives?: Stream[];
+  countTotalLive: number;
 }
 
 export default function Lives({ user: { isLoading, user } }: globalProps) {
-  const { data, isLoading: isLoadingLives } =
-    useSWR<IResponseLives>("api/lives");
+  const router = useRouter();
+  const { data, isLoading: isLoadingLives } = useSWR<IResponseLives>(
+    router.query.page ? `api/lives?page=${router.query.page}` : null,
+  );
+  // router.query.page 가 생성되기 까지 시간이 걸림
 
   return (
     <Layout
@@ -22,21 +30,7 @@ export default function Lives({ user: { isLoading, user } }: globalProps) {
       <div id="component-lives">
         <section className="live-list space-y-6 ">
           {data?.lives?.map((element, i) => (
-            <div
-              key={i}
-              className="list__element  border-b-2    last:border-b-0 "
-            >
-              <Link href={`/lives/${element.id}`}>
-                <div className="mt-5 px-4 pb-10">
-                  <div className="video mb-2 aspect-video rounded-lg bg-gray-400"></div>
-                  <div className="info">
-                    <h2 className="text-lg font-semibold text-gray-800">
-                      {element.name}
-                    </h2>
-                  </div>
-                </div>
-              </Link>
-            </div>
+            <ListItemLives key={element.id} element={element} />
           ))}
         </section>
 
@@ -57,6 +51,7 @@ export default function Lives({ user: { isLoading, user } }: globalProps) {
           </svg>
         </FloatingButtonLink>
       </div>
+      <Pagination countTotal={data?.countTotalLive} />
     </Layout>
   );
 }

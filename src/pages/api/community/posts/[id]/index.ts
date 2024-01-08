@@ -25,6 +25,7 @@ async function handler(
             id: true,
             user: { select: { id: true, name: true, avatar: true } },
           },
+          take: 10,
         },
       },
     });

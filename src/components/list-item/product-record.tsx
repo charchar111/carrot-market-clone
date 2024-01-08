@@ -1,7 +1,7 @@
 import { IResponse, ProductWithCount } from "@/libs/types";
 import { Record } from "@prisma/client";
 import useSWR from "swr";
-import Item from "./item";
+import Item from "./product";
 
 interface RecordWithProduct extends Record {
   product: ProductWithCount;

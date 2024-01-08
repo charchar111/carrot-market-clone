@@ -1,6 +1,6 @@
 import FloatingButtonLink from "@/components/floating-button-link";
-import Item from "@/components/item";
-import ItemProductRecord from "@/components/item-product-record";
+import Item from "@/components/list-item/product";
+import ItemProductRecord from "@/components/list-item/product-record";
 import { Layout } from "@/components/layouts";
 import Link from "next/link";
 
