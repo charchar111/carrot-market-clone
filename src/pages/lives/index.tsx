@@ -2,6 +2,7 @@ import FloatingButtonLink from "@/components/floating-button-link";
 import { Layout } from "@/components/layouts";
 import ListItemLives from "@/components/list-item/lives";
 import Pagination from "@/components/pagination";
+import useIncludeQuery from "@/libs/client/useIncludeQuery";
 import { IResponse, globalProps } from "@/libs/types";
 import { Stream } from "@prisma/client";
 import Link from "next/link";
@@ -16,6 +17,9 @@ interface IResponseLives extends IResponse {
 
 export default function Lives({ user: { isLoading, user } }: globalProps) {
   const router = useRouter();
+
+  useIncludeQuery("page", "1");
+
   const { data, isLoading: isLoadingLives } = useSWR<IResponseLives>(
     router.query.page ? `api/lives?page=${router.query.page}` : null,
   );

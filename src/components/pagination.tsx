@@ -6,9 +6,15 @@ import { useEffect, useState } from "react";
 
 interface PaginationProps {
   countTotal: number | undefined;
+  query?: string;
+  pathname?: string;
 }
 
-export default function Pagination({ countTotal }: PaginationProps) {
+export default function Pagination({
+  countTotal,
+  query = "page",
+  pathname = undefined,
+}: PaginationProps) {
   const countTotalPage = pagination.countTotalPage(countTotal, ITEM_PER_PAGE);
   const router = useRouter();
 
@@ -44,7 +50,8 @@ export default function Pagination({ countTotal }: PaginationProps) {
     });
 
     setPageDirection(undefined);
-    if (newPage) router.push(`/lives?page=${newPage}`);
+    if (newPage) router.push(`${router.pathname}?${query}=${newPage}`);
+    // if (newPage) router.push(`/lives?page=${newPage}`);
   }, [pageState, router, pageDirection]);
 
   return (
@@ -79,7 +86,10 @@ export default function Pagination({ countTotal }: PaginationProps) {
 
           return (
             <Link
-              href={`/lives?page=${pageState * PAGE_BUTTON_COUNT + index + 1}`}
+              href={`${router.pathname}?${query}=${
+                pageState * PAGE_BUTTON_COUNT + index + 1
+              }`}
+              // href={`/lives?page=${pageState * PAGE_BUTTON_COUNT + index + 1}`}
               key={index}
             >
               <div

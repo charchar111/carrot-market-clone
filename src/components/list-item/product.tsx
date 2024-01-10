@@ -11,7 +11,10 @@ interface ItemProps {
 
 export default function Item({ children, title, price, id, heart }: ItemProps) {
   return (
-    <div className=" row flex justify-between border-b-2 p-4 py-8" key={id}>
+    <div
+      className=" row flex justify-between border-b-2 p-4 py-8 last:border-b-0"
+      key={id}
+    >
       <Link href={`/products/${id}`}>
         <div className="row__column1 flex cursor-pointer items-center space-x-2">
           <div className="img-wrapper aspect-square w-20 rounded-lg bg-gray-400" />

@@ -12,6 +12,7 @@ interface FormEditProfile {
   email: string | null;
   phone: string | null;
   name: string;
+  avatar: string;
 }
 
 export default function ProfileEdit({ user }: globalProps) {
@@ -50,6 +51,7 @@ export default function ProfileEdit({ user }: globalProps) {
       });
     }
     mutationProfile(formData);
+
     // mutationProfile({
     //   name: formData.name !== user.user?.name ? formData.name : undefined,
     //   email: formData.email !== user.user?.email ? formData.email : undefined,
@@ -84,7 +86,12 @@ export default function ProfileEdit({ user }: globalProps) {
               <p className="rounded-lg  bg-orange-500 p-2 px-4 text-white opacity-80 transition-all hover:opacity-100">
                 Change Profill
               </p>
-              <input type="file" className="hidden" accept="image/*" />
+              <input
+                {...register("avatar")}
+                type="file"
+                className="hidden"
+                accept="image/*"
+              />
             </label>
           </form>
         </div>

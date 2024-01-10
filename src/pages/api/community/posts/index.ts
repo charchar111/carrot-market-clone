@@ -2,37 +2,43 @@ import client from "@/libs/server/client";
 import withHandler, { ResponseType } from "@/libs/server/withHandler";
 import { NextApiRequest, NextApiResponse } from "next";
 import { withApiSession } from "@/libs/server/withSession";
+import { ITEM_PER_PAGE } from "@/libs/constant";
 
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>,
 ): Promise<any> {
   if (req.method === "GET") {
-    const { latitude, longitude } = req.query;
+    const { latitude, longitude, page } = req.query;
     // console.log(latitude, longitude);
-
+    let posts;
+    const dataQuery: any = {};
     let parsedLatitude;
     let parsedLongitude;
     if (latitude && longitude) {
       parsedLatitude = parseFloat(latitude?.toString());
       parsedLongitude = parseFloat(longitude.toString());
+
+      dataQuery.latitude = {
+        gte: parsedLatitude - 0.01,
+        lte: parsedLatitude + 0.01,
+      };
+      dataQuery.longitude = {
+        gte: parsedLongitude - 0.01,
+        lte: parsedLongitude + 0.01,
+      };
     }
 
-    const posts = await client.post.findMany({
-      where: {
-        latitude:
-          parsedLatitude && parsedLongitude
-            ? { gte: parsedLatitude - 0.01, lte: parsedLatitude + 0.01 }
-            : null,
-
-        longitude:
-          parsedLatitude && parsedLongitude
-            ? { gte: parsedLongitude - 0.01, lte: parsedLongitude + 0.01 }
-            : null,
-      },
-
+    posts = await client.post.findMany({
+      where: dataQuery,
+      orderBy: { id: "asc" },
+      take: ITEM_PER_PAGE,
+      skip: page == undefined ? 0 : (+page?.toString() - 1) * ITEM_PER_PAGE,
       include: { _count: true, user: { select: { id: true, name: true } } },
     });
+
+    console.log(req.query);
+
     return res.status(200).json({ ok: true, posts });
   }
 

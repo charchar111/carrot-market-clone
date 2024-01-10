@@ -16,7 +16,6 @@ async function handler(
       return res.status(400).json({ ok: false });
 
     const countTotalLive = await client.stream.count({});
-    console.log("page", page, countTotalLive);
 
     const lives = await client.stream.findMany({
       take: ITEM_PER_PAGE,

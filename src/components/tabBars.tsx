@@ -9,7 +9,7 @@ export const TabBar = function ({ userId }: TabBarProps) {
     <nav className="fixed bottom-0 w-full max-w-lg border-t bg-white p-4 py-3 text-gray-600">
       <ul className="flex  flex-wrap justify-around space-x-2">
         <li>
-          <Link href="/">
+          <Link href="/?page=1">
             <div className="flex flex-col items-center space-y-1 ">
               <span>
                 <svg
