@@ -12,7 +12,7 @@ interface FormEditProfile {
   email: string | null;
   phone: string | null;
   name: string;
-  avatar: string;
+  avatar: FileList;
 }
 
 export default function ProfileEdit({ user }: globalProps) {
@@ -21,13 +21,24 @@ export default function ProfileEdit({ user }: globalProps) {
     setValue,
     handleSubmit,
     setError,
+    watch,
     formState: { errors: formErrors },
   } = useForm<FormEditProfile>({ reValidateMode: "onSubmit" });
+
+  const [avatarPreview, setAvatarPreview] = useState<string | undefined>();
 
   const [mutationProfile, { data, error, loading }] =
     useMutation<IResponse>("/api/users/me");
 
   // console.log("mudation", data, error, loading);
+  const watchAvatar = watch("avatar");
+
+  useEffect(() => {
+    if (watchAvatar && watchAvatar.length > 0) {
+      const item = watchAvatar.item(0);
+      if (item) setAvatarPreview(URL.createObjectURL(item));
+    }
+  }, [watchAvatar]);
 
   useEffect(() => {
     if (data && !data?.ok)
@@ -80,7 +91,11 @@ export default function ProfileEdit({ user }: globalProps) {
     >
       <div className="px-4 py-10">
         <div className="head mb-10 flex items-center space-x-3">
-          <div className="h-20 w-20 rounded-full bg-gray-500" />
+          <div className="h-20 w-20 overflow-hidden rounded-full bg-gray-500">
+            {!avatarPreview ? null : (
+              <img className="h-full object-fill" src={avatarPreview} alt="" />
+            )}
+          </div>
           <form className="">
             <label className="cursor-pointer ">
               <p className="rounded-lg  bg-orange-500 p-2 px-4 text-white opacity-80 transition-all hover:opacity-100">
