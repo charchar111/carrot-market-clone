@@ -1,19 +1,31 @@
 import ItemProfieReview from "@/components/list-item/profile-review";
 import { Layout } from "@/components/layouts";
 import useUser from "@/libs/client/useUser";
-import { IResponseProfile, IResponseReviews } from "@/libs/types";
+import { IResponseProfile, IResponseReviews, globalProps } from "@/libs/types";
 import type { NextPage } from "next";
 import Link from "next/link";
 import useSWR from "swr";
+import { makeStringCloudflareImageUrl } from "@/libs/client/utils";
 
-const Profile: NextPage = ({ user: { user, isLoading } }: any) => {
+const Profile: NextPage<globalProps> = ({ user: { user, isLoading } }) => {
   const { data: dataReview } = useSWR<IResponseReviews>("/api/users/reviews");
 
   return (
     <Layout canGoBack user={!isLoading && user ? user : undefined}>
       <div id="profile-index" className="px-4 py-10">
         <div className="head mb-10 flex items-center space-x-2">
-          <div className="h-16 w-16 rounded-full bg-gray-500" />
+          <div className="h-16 w-16 overflow-hidden rounded-full bg-gray-500">
+            {user?.avatar == "" || user?.avatar == null ? null : (
+              <img
+                className="h-full object-fill"
+                // src={`https://imagedelivery.net/GbvPRB54A3f6yFO0BUCnmA/${user.avatar}/public`}
+                src={makeStringCloudflareImageUrl({
+                  id: user.avatar,
+                  variant: "avatar",
+                })}
+              />
+            )}
+          </div>
           <div className="flex flex-col">
             <span className="font-semibold">{user?.name}</span>
             <Link href={`/profile/edit`}>

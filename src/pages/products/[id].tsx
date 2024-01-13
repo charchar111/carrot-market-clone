@@ -2,7 +2,8 @@ import ButtonDefault from "@/components/button";
 import { Layout } from "@/components/layouts";
 import useMutation from "@/libs/client/useMutation";
 import useUser from "@/libs/client/useUser";
-import { IResponse } from "@/libs/types";
+import { makeStringCloudflareImageUrl } from "@/libs/client/utils";
+import { IResponse, globalProps } from "@/libs/types";
 import { Product } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -18,7 +19,9 @@ interface IResponseProduct extends IResponse {
   isLiked: boolean;
 }
 
-export default function ItemDetail() {
+export default function ItemDetail({
+  user: { user, isLoading: isLoadingUser },
+}: globalProps) {
   // const { user, isLoading: userIsLoading } = useUser();
   const router = useRouter();
   // console.log(router.query);
@@ -40,19 +43,22 @@ export default function ItemDetail() {
     if (!data) return;
 
     boundMutate((prev) => prev && { ...prev, isLiked: !prev.isLiked }, false);
-    // unboundMutate(
-    //   "/api/users/me",
-    //   (prev: any) => ({ ...prev, ok: !prev?.ok }),
-    //   false,
-    // );
-    // unboundMutate 학습용 테스트 코드
   };
 
   return (
-    <Layout canGoBack>
+    <Layout canGoBack user={!isLoadingUser && user ? user : undefined}>
       <div id="item-detail">
         <div className="detail__main p-3">
-          <div className="mb-5 h-44 w-full rounded-lg bg-gray-400" />
+          <div className="mb-5 aspect-video w-full rounded-lg bg-gray-400">
+            {!data?.product.image ? null : (
+              <img
+                className="object-fi w-full"
+                src={makeStringCloudflareImageUrl({
+                  id: data?.product.image,
+                })}
+              ></img>
+            )}
+          </div>
           <Link href={`/users/profiles/${data?.product.user?.id}`}>
             <div className="profill mb-7 flex cursor-pointer items-center space-x-2 border-b-2 border-gray-100 pb-3 opacity-90 hover:opacity-100">
               <div className="aspect-square w-10  rounded-md bg-gray-400 " />

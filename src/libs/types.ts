@@ -2,7 +2,7 @@ import { Answer, Post, Product, Review, User } from "@prisma/client";
 
 export interface IResponse {
   ok: boolean | undefined;
-  error?: { message: string };
+  error?: { message: string | any[] };
 }
 
 export interface IFormCommunityWrite {
@@ -69,4 +69,22 @@ export interface ProductWithCount extends Product {
 
 export interface globalProps {
   user: { user: User | undefined; isLoading: boolean };
+}
+
+export interface IcloudflareUrlSuccess extends IResponse {
+  id?: string;
+  uploadURL?: string;
+}
+
+export interface IcloudflareUploadResponse {
+  result: {
+    id: string;
+    filename: string;
+    uploaded: string;
+    requireSignedURLs: boolean;
+    variants: string[];
+  } | null;
+  success: boolean;
+  errors: { code: number; message: string }[];
+  messages: any[];
 }

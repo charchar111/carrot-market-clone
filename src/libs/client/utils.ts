@@ -3,6 +3,17 @@ export function makeClassName(...classNames: string[]) {
   return classNames.join(" ");
 }
 
+export function makeStringCloudflareImageUrl({
+  id,
+  variant = "public",
+}: {
+  id: string;
+  variant?: string;
+}) {
+  if (!id) return undefined;
+  return `https://imagedelivery.net/GbvPRB54A3f6yFO0BUCnmA/${id}/${variant}`;
+}
+
 export const pagination = {
   // 수동 페이지네이션에서 필요한 최대 페이지 버튼을  계산
   countTotalPage: function (

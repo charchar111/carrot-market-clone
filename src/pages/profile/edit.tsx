@@ -2,7 +2,8 @@ import ButtonDefault from "@/components/button";
 import Input from "@/components/input";
 import { Layout } from "@/components/layouts";
 import useMutation from "@/libs/client/useMutation";
-import { IResponse, globalProps } from "@/libs/types";
+import { makeStringCloudflareImageUrl } from "@/libs/client/utils";
+import { IResponse, IcloudflareUrlSuccess, globalProps } from "@/libs/types";
 import { User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
@@ -47,21 +48,64 @@ export default function ProfileEdit({ user }: globalProps) {
 
   // console.log("formerror", formErrors);
 
-  const onValid: SubmitHandler<FormEditProfile> = function (formData) {
-    console.log(formData);
+  const onValid: SubmitHandler<FormEditProfile> = async function ({
+    name,
+    email,
+    phone,
+    avatar,
+  }) {
     if (loading) return;
-    if (formData.name.trim() == "")
+    if (name.trim() == "")
       return setError("root", {
         type: "validate",
         message: "이름은 필수로 입력해야 합니다.",
       });
-    if (formData.email?.trim() == "" && formData.phone?.trim() == "") {
+
+    if (email?.trim() == "" && phone?.trim() == "") {
       return setError("root", {
         type: "validate",
         message: "email과 phone 중 하나는 입력해야 합니다.",
       });
     }
-    mutationProfile(formData);
+
+    if (avatar && avatar.length > 0) {
+      // cf url,
+      //  cf url에 파일 업로드
+
+      const cloudflareUrl: IcloudflareUrlSuccess = await (
+        await fetch("/api/files")
+      ).json();
+
+      if (cloudflareUrl.error || !cloudflareUrl.uploadURL || !cloudflareUrl.id)
+        return;
+
+      const form = new FormData();
+      form.append(
+        "file",
+        avatar[0],
+        `${user.user?.id}-${email || phone}-${Date.now()}`,
+      );
+
+      const response = await (
+        await fetch(cloudflareUrl.uploadURL, { method: "POST", body: form })
+      ).json();
+
+      console.log(response);
+      mutationProfile({
+        name,
+        email,
+        phone,
+        avatarId: response.success
+          ? response.result.id
+          : user.user?.avatar || "",
+      });
+    } else {
+      mutationProfile({
+        name,
+        email,
+        phone,
+      });
+    }
 
     // mutationProfile({
     //   name: formData.name !== user.user?.name ? formData.name : undefined,
@@ -79,6 +123,13 @@ export default function ProfileEdit({ user }: globalProps) {
       setValue("name", user.user?.name);
       if (user.user.email) setValue("email", user.user.email);
       if (user.user.phone) setValue("phone", user.user.phone || "");
+      if (user.user.avatar)
+        setAvatarPreview(
+          makeStringCloudflareImageUrl({
+            id: user.user.avatar,
+            variant: "avatar",
+          }),
+        );
     }
   }, [user, setValue]);
   // form의 초기값 설정

@@ -8,6 +8,7 @@ interface IUpdateData {
   name?: string;
   email?: string | null;
   phone?: string | null;
+  avatar?: string;
 }
 
 async function handler(
@@ -24,7 +25,7 @@ async function handler(
 
   if (req.method === "POST") {
     const {
-      body: { email, phone, name },
+      body: { email, phone, name, avatarId },
       session: { user },
     } = req;
     let updateData: IUpdateData = {};
@@ -37,13 +38,24 @@ async function handler(
     });
     // 세션 정보로 내 유저 정보 확인
 
+    console.log("avatarId", avatarId, typeof avatarId);
+
+    if (
+      avatarId &&
+      typeof avatarId == "string" &&
+      avatarId !== currentUser?.avatar
+    ) {
+      updateData.avatar = avatarId;
+    }
+
     if (
       name &&
       typeof name == "string" &&
       name.trim() &&
       name !== currentUser?.name
-    )
+    ) {
       updateData.name = name;
+    }
 
     if (!(email || phone))
       return res.status(400).json({
