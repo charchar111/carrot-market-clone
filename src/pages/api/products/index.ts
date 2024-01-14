@@ -22,7 +22,7 @@ async function handler(
 
       take: ITEM_PER_PAGE,
       skip: (+page.toString() - 1) * ITEM_PER_PAGE,
-      orderBy: { id: "asc" },
+      orderBy: { id: "desc" },
     });
 
     console.log("page", page, countTotalProduct);

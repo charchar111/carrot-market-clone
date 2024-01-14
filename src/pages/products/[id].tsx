@@ -5,6 +5,7 @@ import useUser from "@/libs/client/useUser";
 import { makeStringCloudflareImageUrl } from "@/libs/client/utils";
 import { IResponse, globalProps } from "@/libs/types";
 import { Product } from "@prisma/client";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR, { useSWRConfig } from "swr";
@@ -50,18 +51,35 @@ export default function ItemDetail({
       <div id="item-detail">
         <div className="detail__main p-3">
           <div className="mb-5 aspect-video w-full rounded-lg bg-gray-400">
-            {!data?.product.image ? null : (
-              <img
-                className="object-fi w-full"
-                src={makeStringCloudflareImageUrl({
-                  id: data?.product.image,
-                })}
-              ></img>
-            )}
+            <div className="relative flex h-full items-center justify-center overflow-hidden">
+              {!data?.product.image ? null : (
+                <Image
+                  className="w-full object-cover"
+                  src={makeStringCloudflareImageUrl({
+                    id: data?.product.image,
+                  })}
+                  fill={true}
+                  // width={488}
+                  // height={326}
+                  // loading="lazy"
+                ></Image>
+              )}
+            </div>
           </div>
           <Link href={`/users/profiles/${data?.product.user?.id}`}>
             <div className="profill mb-7 flex cursor-pointer items-center space-x-2 border-b-2 border-gray-100 pb-3 opacity-90 hover:opacity-100">
-              <div className="aspect-square w-10  rounded-md bg-gray-400 " />
+              <div className="aspect-square w-10  overflow-hidden rounded-full bg-gray-400 ">
+                <Image
+                  src={makeStringCloudflareImageUrl({
+                    id: user?.avatar,
+                    variant: "avatar",
+                  })}
+                  alt=""
+                  width={48}
+                  height={48}
+                  loading="lazy"
+                />
+              </div>
               <div>
                 <p className="font-bold text-gray-900">
                   {data?.product?.user?.name}

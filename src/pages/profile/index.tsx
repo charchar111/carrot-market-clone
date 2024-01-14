@@ -18,7 +18,6 @@ const Profile: NextPage<globalProps> = ({ user: { user, isLoading } }) => {
             {user?.avatar == "" || user?.avatar == null ? null : (
               <img
                 className="h-full object-fill"
-                // src={`https://imagedelivery.net/GbvPRB54A3f6yFO0BUCnmA/${user.avatar}/public`}
                 src={makeStringCloudflareImageUrl({
                   id: user.avatar,
                   variant: "avatar",

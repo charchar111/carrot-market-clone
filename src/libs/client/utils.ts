@@ -7,7 +7,7 @@ export function makeStringCloudflareImageUrl({
   id,
   variant = "public",
 }: {
-  id: string;
+  id: string | undefined | null;
   variant?: string;
 }) {
   if (!id) return undefined;

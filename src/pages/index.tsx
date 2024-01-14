@@ -11,6 +11,8 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 import useIncludeQuery from "@/libs/client/useIncludeQuery";
 import Pagination from "@/components/pagination";
+import Image from "next/image";
+import localImageCoffee from "../../public/coffee-8406187_1280.jpg";
 
 interface ProductWithCount extends Product {
   _count: { Records: number };
@@ -47,6 +49,14 @@ const RootHome: NextPage<globalProps> = ({ user }) => {
       </Head>
       <div>
         <div>
+          {/* <div className="local-img">
+            <Image
+              src={localImageCoffee}
+              alt="coffee"
+              placeholder="blur"
+              quality={50}
+            />
+          </div> */}
           {data?.products?.map((product) => (
             <Item
               key={product.id}
