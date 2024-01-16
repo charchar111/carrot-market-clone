@@ -25,8 +25,6 @@ async function handler(
       orderBy: { id: "desc" },
     });
 
-    console.log("page", page, countTotalProduct);
-
     return res.status(200).json({ ok: true, products, countTotalProduct });
   }
 

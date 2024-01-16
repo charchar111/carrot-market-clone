@@ -3,10 +3,11 @@ import Input from "@/components/input";
 import { Layout } from "@/components/layouts";
 import Messages from "@/components/message";
 import useMutation from "@/libs/client/useMutation";
+import { CLOUDFLARE_CUSTOMER_SUBDOMAIN } from "@/libs/constant";
 import { IResponse, globalProps } from "@/libs/types";
 import { Message, Stream } from "@prisma/client";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
 import useSWR, { MutatorCallback } from "swr";
 
@@ -21,6 +22,7 @@ interface StreamWithUserMessage extends Stream {
 
 interface IResponseLiveDetail extends IResponse {
   live?: StreamWithUserMessage;
+  isOwner: boolean;
 }
 
 interface MessageForm {
@@ -30,6 +32,8 @@ interface MessageForm {
 export default function livesDetail({
   user: { isLoading, user },
 }: globalProps) {
+  const [steamInfoModal, setSteamInfoModal] = useState(false);
+
   const router = useRouter();
 
   const {
@@ -111,14 +115,49 @@ export default function livesDetail({
     <Layout canGoBack user={!isLoading && user ? user : undefined}>
       <div className="px-4">
         <div className="mt-5 px-4 pb-10">
-          <div className="video mb-5 aspect-video rounded-lg bg-gray-400"></div>
-          <div className="info space-y-2">
+          <div className="video mb-5 aspect-video rounded-lg bg-gray-400">
+            {!data?.live ? null : (
+              <iframe
+                className="h-full w-full"
+                src={`https://${CLOUDFLARE_CUSTOMER_SUBDOMAIN}.cloudflarestream.com/${data?.live?.streamId}/iframe`}
+                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                allowFullScreen={true}
+              ></iframe>
+            )}
+          </div>
+          <div className="info relative space-y-2">
             <h2 className="pl-2 text-lg font-semibold text-gray-800">
               {data?.live?.name}
             </h2>
-
             <p className="pl-2">${data?.live?.price}</p>
             <p className="pl-2 pt-2">{data?.live?.description}</p>
+            {!data?.isOwner ? null : (
+              <button
+                className="rounded-md bg-red-600 p-3 text-white"
+                onClick={() => setSteamInfoModal((c) => !c)}
+              >
+                {steamInfoModal
+                  ? "스트림 보안정보 끄기"
+                  : "스트림 보안정보 보기"}
+              </button>
+            )}
+
+            {!data?.isOwner || !steamInfoModal ? null : (
+              <div className="absolute space-y-2 break-all bg-gray-700 p-10 text-white">
+                <p className="pb-2">
+                  이 정보는 방송을 만든 사람에게만 보여지며 절대 남에게 보여주면
+                  안됩니다.
+                </p>
+                <p>
+                  <strong className="text-red-300">스트림URL: </strong>
+                  {data.live?.streamUrl}
+                </p>
+                <p>
+                  <strong className="text-red-300">스트림Key: </strong>
+                  {data.live?.streamKey}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 

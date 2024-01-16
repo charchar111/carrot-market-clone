@@ -17,7 +17,7 @@ async function handler(
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+          Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN_IMAGE}`,
         },
       },
     )

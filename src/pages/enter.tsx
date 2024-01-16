@@ -5,9 +5,13 @@ import useMutation from "@/libs/client/useMutation";
 import { makeClassName } from "@/libs/client/utils";
 import { IResponse, globalProps } from "@/libs/types";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
 import { useSWRConfig } from "swr";
+import dynamic from "next/dynamic";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+// import TestSection from "@/components/test-dynamic-component";
 
 interface EnterForm {
   email?: string;
@@ -17,6 +21,27 @@ interface EnterForm {
 interface TokenForm {
   token?: string;
 }
+
+// const DynamicTestSection = dynamic(
+//   () =>
+//     new Promise((resolve) =>
+//       setTimeout(
+//         () => resolve(import("@/components/test-dynamic-component")),
+//         2000,
+//       ),
+//     ),
+//   { ssr: false, suspense: true },
+// );
+
+const DynamicTestSection = lazy(
+  () =>
+    new Promise((resolve) =>
+      setTimeout(
+        () => resolve(import("@/components/test-dynamic-component")),
+        2000,
+      ),
+    ),
+);
 
 export default function Enter({ user }: globalProps) {
   const [enter, { loading, data, error }] =
@@ -184,6 +209,11 @@ export default function Enter({ user }: globalProps) {
                           : null
                   }
                 />
+                {method == "phone" ? (
+                  <Suspense fallback={<Skeleton />}>
+                    <DynamicTestSection />
+                  </Suspense>
+                ) : null}
               </form>
             </>
           )}

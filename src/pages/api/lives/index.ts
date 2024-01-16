@@ -4,6 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { withApiSession } from "@/libs/server/withSession";
 import { ITEM_PER_PAGE } from "@/libs/constant";
+import { IResponseLiveInput } from "@/libs/types";
 
 async function handler(
   req: NextApiRequest,
@@ -20,7 +21,7 @@ async function handler(
     const lives = await client.stream.findMany({
       take: ITEM_PER_PAGE,
       skip: (+page.toString() - 1) * ITEM_PER_PAGE,
-      orderBy: { id: "asc" },
+      orderBy: { id: "desc" },
     });
     return res.status(200).json({ ok: true, lives, countTotalLive });
   }
@@ -40,12 +41,41 @@ async function handler(
         },
       });
 
+    const optionRequestLiveInput = {
+      meta: {
+        name,
+      },
+      recording: {
+        mode: "automatic",
+        timeoutSeconds: 20,
+      },
+    };
+    const responseLiveInput: IResponseLiveInput = await (
+      await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/stream/live_inputs`,
+
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN_STREAM}`,
+          },
+          body: JSON.stringify(optionRequestLiveInput),
+        },
+      )
+    ).json();
+
+    if (!responseLiveInput.success || responseLiveInput.result == null)
+      return res.status(500).json({ ok: false });
+
     const live = await client.stream.create({
       data: {
         name,
         price: +price,
         description: description || null,
         user: { connect: { id: user?.id } },
+        streamId: responseLiveInput.result.uid || null,
+        streamUrl: responseLiveInput.result.rtmps.url || null,
+        streamKey: responseLiveInput.result.rtmps.streamKey || null,
       },
     });
 

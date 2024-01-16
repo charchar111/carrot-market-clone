@@ -88,3 +88,52 @@ export interface IcloudflareUploadResponse {
   errors: { code: number; message: string }[];
   messages: any[];
 }
+
+export interface IResponseLiveInput {
+  result: Result;
+  success: boolean;
+  errors: any[];
+  messages: any[];
+}
+
+interface Result {
+  uid: string;
+  rtmps: Rtmps;
+  rtmpsPlayback: Rtmps;
+  srt: Srt;
+  srtPlayback: Srt;
+  webRTC: WebRTC;
+  webRTCPlayback: WebRTC;
+  created: Date;
+  modified: Date;
+  meta: Meta;
+  status: null;
+  recording: Recording;
+  deleteRecordingAfterDays: null;
+}
+
+interface Meta {
+  name: string;
+}
+
+interface Recording {
+  mode: string;
+  timeoutSeconds: number;
+  requireSignedURLs: boolean;
+  allowedOrigins: null;
+}
+
+interface Rtmps {
+  url: string;
+  streamKey: string;
+}
+
+interface Srt {
+  url: string;
+  streamId: string;
+  passphrase: string;
+}
+
+interface WebRTC {
+  url: string;
+}

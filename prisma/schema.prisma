@@ -145,6 +145,9 @@ model Stream {
   description String?   @db.MediumText
   price       Int
   Messages    Message[]
+  streamUrl   String?
+  streamKey   String?
+  streamId    String?
 
   @@index([userId])
 }

@@ -7,11 +7,8 @@ const Chats: NextPage = () => {
     <Layout title="채팅" hasTabBar>
       <div className=" divide-y-8 bg-gray-50 p-2">
         {[...Array(10)].map((_, i) => (
-          <Link href={`chats/${i}`}>
-            <div
-              key={i}
-              className="profill mb-3 flex w-full cursor-pointer items-center space-x-3 border-gray-100 bg-white px-4  pb-2  pt-4 shadow-sm "
-            >
+          <Link href={`chats/${i}`} key={i}>
+            <div className="profill mb-3 flex w-full cursor-pointer items-center space-x-3 border-gray-100 bg-white px-4  pb-2  pt-4 shadow-sm ">
               <div className="h-10 w-10 rounded-full bg-slate-300" />
               <div>
                 <p className="text-sm font-medium text-gray-700">Steve Jebs</p>
