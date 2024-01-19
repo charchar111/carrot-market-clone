@@ -1,7 +1,7 @@
 import ItemProfieReview from "@/components/list-item/profile-review";
 import { Layout } from "@/components/layouts";
-import useUser from "@/libs/client/useUser";
-import { IResponseProfile, IResponseReviews, globalProps } from "@/libs/types";
+
+import { IResponseReviews, globalProps } from "@/libs/types";
 import type { NextPage } from "next";
 import Link from "next/link";
 import useSWR from "swr";

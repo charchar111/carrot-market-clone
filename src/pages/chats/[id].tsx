@@ -1,10 +1,13 @@
 import Input from "@/components/input";
 import { Layout } from "@/components/layouts";
 import Message from "@/components/message";
+import { globalProps } from "@/libs/types";
 
-export default function chatDetail() {
+export default function chatDetail({
+  user: { user, isLoading: isLoadingUser },
+}: globalProps) {
   return (
-    <Layout canGoBack>
+    <Layout canGoBack user={!isLoadingUser && user ? user : undefined}>
       <div id="chat-detail" className="space-y-5 px-4 ">
         {[...Array(14)].map((_, i) => {
           if (i % 3 === 0)

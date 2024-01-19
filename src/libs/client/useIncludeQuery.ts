@@ -11,5 +11,5 @@ export default function useIncludeQuery(query: string, value: string) {
   useEffect(() => {
     if (!router.query.page && !router.asPath.includes(`?${query}=`))
       router.replace(`${router.asPath}?${query}=${value}`);
-  }, [router]);
+  }, [router, query]);
 }

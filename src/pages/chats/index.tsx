@@ -1,10 +1,11 @@
 import { Layout } from "@/components/layouts";
+import { globalProps } from "@/libs/types";
 import type { NextPage } from "next";
 import Link from "next/link";
 
-const Chats: NextPage = () => {
+const Chats: NextPage<globalProps> = ({ user: { user, isLoading } }) => {
   return (
-    <Layout title="채팅" hasTabBar>
+    <Layout title="채팅" hasTabBar user={!isLoading && user ? user : undefined}>
       <div className=" divide-y-8 bg-gray-50 p-2">
         {[...Array(10)].map((_, i) => (
           <Link href={`chats/${i}`} key={i}>

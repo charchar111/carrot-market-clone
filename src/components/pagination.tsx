@@ -52,7 +52,7 @@ export default function Pagination({
     setPageDirection(undefined);
     if (newPage) router.push(`${router.pathname}?${query}=${newPage}`);
     // if (newPage) router.push(`/lives?page=${newPage}`);
-  }, [pageState, router, pageDirection]);
+  }, [pageState, router, pageDirection, query]);
 
   return (
     <section className="pagination px-16 ">

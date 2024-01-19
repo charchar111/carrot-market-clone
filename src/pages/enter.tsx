@@ -7,10 +7,11 @@ import { IResponse, globalProps } from "@/libs/types";
 import { useRouter } from "next/router";
 import { Suspense, lazy, useEffect, useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
-import { useSWRConfig } from "swr";
+import { SWRConfig, useSWRConfig } from "swr";
 import dynamic from "next/dynamic";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { NextPage } from "next";
 // import TestSection from "@/components/test-dynamic-component";
 
 interface EnterForm {
@@ -22,7 +23,8 @@ interface TokenForm {
   token?: string;
 }
 
-// const DynamicTestSection = dynamic(
+// const DynamicTestSection2 = dynamic(
+//   //@ts-ignore
 //   () =>
 //     new Promise((resolve) =>
 //       setTimeout(
@@ -33,17 +35,11 @@ interface TokenForm {
 //   { ssr: false, suspense: true },
 // );
 
-const DynamicTestSection = lazy(
-  () =>
-    new Promise((resolve) =>
-      setTimeout(
-        () => resolve(import("@/components/test-dynamic-component")),
-        2000,
-      ),
-    ),
-);
+// const DynamicTestSection = lazy(
+//   () => import("@/components/test-dynamic-component"),
+// );
 
-export default function Enter({ user }: globalProps) {
+function Enter({ user }: globalProps) {
   const [enter, { loading, data, error }] =
     useMutation<IResponse>("/api/users/enter");
 
@@ -78,7 +74,7 @@ export default function Enter({ user }: globalProps) {
         ok: true,
         error: undefined,
       }));
-  }, [tokenData]);
+  }, [mutateUnboundSWR, tokenData]);
 
   const onTokenInvalid = function (error: FieldErrors) {
     console.log(error);
@@ -97,14 +93,14 @@ export default function Enter({ user }: globalProps) {
 
   useEffect(() => {
     if (tokenData?.ok) router.push("/");
-  }, [tokenData]);
+  }, [router, tokenData]);
 
   const [authorized, setAuthorized] = useState<any>();
 
   useEffect(() => {
     console.log(authorized);
     if (authorized) router.replace(`/profile/${authorized.id}`);
-  }, [authorized]);
+  }, [router, authorized]);
 
   return (
     <Layout
@@ -209,11 +205,11 @@ export default function Enter({ user }: globalProps) {
                           : null
                   }
                 />
-                {method == "phone" ? (
+                {/* {method == "phone" ? (
                   <Suspense fallback={<Skeleton />}>
                     <DynamicTestSection />
                   </Suspense>
-                ) : null}
+                ) : null} */}
               </form>
             </>
           )}
@@ -259,3 +255,14 @@ export default function Enter({ user }: globalProps) {
     </Layout>
   );
 }
+
+const Page: NextPage<globalProps> = (props) => {
+  // console.log(props);
+  return (
+    <SWRConfig>
+      <Enter user={props.user} />
+    </SWRConfig>
+  );
+};
+
+export default Page;

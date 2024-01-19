@@ -29,7 +29,7 @@ interface MessageForm {
   message: string;
 }
 
-export default function livesDetail({
+export default function LivesDetail({
   user: { isLoading, user },
 }: globalProps) {
   const [steamInfoModal, setSteamInfoModal] = useState(false);
