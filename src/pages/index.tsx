@@ -114,7 +114,7 @@ const Page: NextPage<globalProps> = ({ user, fallback }) => {
       ? `/api/products?page=${router.query.page}`
       : null;
 
-  const fallbackObj = {};
+  const fallbackObj: any = {};
   if (cashKey) fallbackObj[cashKey] = fallback;
 
   // console.log(fallbackObj);
@@ -150,6 +150,8 @@ export async function getServerSideProps(
     }),
     countTotalProduct: await client?.product.count({}),
   };
+
+  // await new Promise((resolve) => setTimeout(resolve, 5000));
 
   if (fallback.products && fallback.countTotalProduct) fallback.ok = true;
 

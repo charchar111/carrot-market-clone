@@ -10,6 +10,7 @@ export default function useUser() {
     "/api/users/me",
     globalFetcher,
   );
+  // console.log(data);
 
   const router = useRouter();
   useEffect(() => {

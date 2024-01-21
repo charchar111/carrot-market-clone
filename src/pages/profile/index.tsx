@@ -1,17 +1,28 @@
 import ItemProfieReview from "@/components/list-item/profile-review";
 import { Layout } from "@/components/layouts";
+import client from "@/libs/server/client";
 
 import { IResponseReviews, globalProps } from "@/libs/types";
-import type { NextPage } from "next";
+import type { NextPage, NextPageContext } from "next";
 import Link from "next/link";
-import useSWR from "swr";
+import useSWR, { SWRConfig } from "swr";
 import { makeStringCloudflareImageUrl } from "@/libs/client/utils";
+import { withApiSessionSSR } from "@/libs/server/withSession";
 
-const Profile: NextPage<globalProps> = ({ user: { user, isLoading } }) => {
+const Profile: NextPage<globalProps> = ({
+  user: { user: userData, isLoading },
+  fallback,
+}) => {
   const { data: dataReview } = useSWR<IResponseReviews>("/api/users/reviews");
-
+  const user = !userData ? fallback.profile : userData;
+  // const user = fallback["/api/users/me"]?.profile;
+  // const dataReview = fallback["/api/users/reviews"];
   return (
-    <Layout canGoBack user={!isLoading && user ? user : undefined}>
+    <Layout
+      canGoBack
+      user={!isLoading && user ? user : undefined}
+      // user={user}
+    >
       <div id="profile-index" className="px-4 py-10">
         <div className="head mb-10 flex items-center space-x-2">
           <div className="h-16 w-16 overflow-hidden rounded-full bg-gray-500">
@@ -119,4 +130,48 @@ const Profile: NextPage<globalProps> = ({ user: { user, isLoading } }) => {
   );
 };
 
-export default Profile;
+// export default Profile;
+
+const Page: NextPage<globalProps> = ({ user, fallback }) => {
+  // console.log(fallback);
+  return (
+    <SWRConfig value={{ fallback }}>
+      <Profile user={user} fallback={fallback["/api/users/me"]} />
+    </SWRConfig>
+  );
+};
+
+export default Page;
+
+export const getServerSideProps = withApiSessionSSR(
+  async ({ req, res, query }: NextPageContext) => {
+    // console.log(req?.session);
+    if (!req?.session.user?.id) return;
+
+    const profile = await client.user.findUnique({
+      where: { id: req?.session.user?.id! },
+    });
+
+    const reviews = await client.review.findMany({
+      where: { CreatedFor: { id: req?.session.user?.id! } },
+      include: {
+        CreatedBy: { select: { id: true, name: true, avatar: true } },
+      },
+    });
+
+    return {
+      props: {
+        fallback: {
+          "/api/users/me": {
+            ok: true,
+            profile: JSON.parse(JSON.stringify(profile)),
+          },
+          "/api/users/reviews": {
+            ok: true,
+            reviews: JSON.parse(JSON.stringify(reviews)),
+          },
+        },
+      },
+    };
+  },
+);

@@ -5,3 +5,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.blog-detail h1 {
+  @apply mb-5 text-xl font-bold text-red-500;
+}
+
+.blog-detail p {
+  @apply text-blue-500;
+}
+
+.blog-detail ul {
+  @apply pl-10;
+}

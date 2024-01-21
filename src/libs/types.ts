@@ -69,6 +69,7 @@ export interface ProductWithCount extends Product {
 
 export interface globalProps {
   user: { user: User | undefined; isLoading: boolean };
+  [key: string]: any;
 }
 
 export interface IcloudflareUrlSuccess extends IResponse {

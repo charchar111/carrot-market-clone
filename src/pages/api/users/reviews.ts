@@ -17,7 +17,6 @@ async function handler(
   const {
     session: { user },
   } = req;
-
   const reviews = await client.review.findMany({
     where: { CreatedFor: { id: user?.id } },
     include: { CreatedBy: { select: { id: true, name: true, avatar: true } } },

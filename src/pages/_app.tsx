@@ -9,7 +9,6 @@ export const globalFetcher = (url: string) =>
   fetch(url).then((res) => res.json());
 
 export default function App({ Component, pageProps }: AppProps) {
-  // console.log("app");
   const { user, isLoading } = useUser();
 
   return (
