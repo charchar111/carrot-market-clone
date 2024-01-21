@@ -2,15 +2,17 @@ import FloatingButtonLink from "@/components/floating-button-link";
 import Item from "@/components/list-item/product";
 import ItemProductRecord from "@/components/list-item/product-record";
 import { Layout } from "@/components/layouts";
-import { IResponse, ProductWithCount } from "@/libs/types";
+import { IResponse, ProductWithCount, globalProps } from "@/libs/types";
 import { Product, Record } from "@prisma/client";
 import Link from "next/link";
 import useSWR from "swr";
 
-export default function profileSell() {
+export default function profileSell({
+  user: { user, isLoading: isLoadingUser },
+}: globalProps) {
   // console.log(data, isLoading);
   return (
-    <Layout canGoBack>
+    <Layout canGoBack user={!isLoadingUser && user ? user : undefined}>
       <div>
         <ItemProductRecord kind="sale" />
 

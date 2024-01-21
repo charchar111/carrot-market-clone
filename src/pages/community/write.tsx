@@ -4,13 +4,19 @@ import { Layout } from "@/components/layouts";
 import Textarea from "@/components/textarea";
 import useCoord from "@/libs/client/useCoords";
 import useMutation from "@/libs/client/useMutation";
-import { IFormCommunityWrite, IResponseCommunityWrite } from "@/libs/types";
+import {
+  IFormCommunityWrite,
+  IResponseCommunityWrite,
+  globalProps,
+} from "@/libs/types";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
 
-const Write: NextPage = () => {
+const Write: NextPage<globalProps> = ({
+  user: { user, isLoading: isLoadingUser },
+}) => {
   const { latitude, longitude } = useCoord();
 
   const {
@@ -40,7 +46,11 @@ const Write: NextPage = () => {
   }, [data, router]);
 
   return (
-    <Layout canGoBack title="Write Post">
+    <Layout
+      canGoBack
+      title="Write Post"
+      user={!isLoadingUser && user ? user : undefined}
+    >
       <div className="px-3 py-10">
         <form
           className="flex flex-col space-y-4 "

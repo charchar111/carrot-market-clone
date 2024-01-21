@@ -55,10 +55,13 @@ export default function ItemDetail({
               {!data?.product.image ? null : (
                 <Image
                   className="w-full object-cover"
-                  src={makeStringCloudflareImageUrl({
-                    id: data?.product.image,
-                  })}
+                  src={
+                    makeStringCloudflareImageUrl({
+                      id: data?.product.image,
+                    })!
+                  }
                   fill={true}
+                  alt=""
                   // width={488}
                   // height={326}
                   // loading="lazy"
@@ -69,16 +72,20 @@ export default function ItemDetail({
           <Link href={`/users/profiles/${data?.product.user?.id}`}>
             <div className="profill mb-7 flex cursor-pointer items-center space-x-2 border-b-2 border-gray-100 pb-3 opacity-90 hover:opacity-100">
               <div className="aspect-square w-10  overflow-hidden rounded-full bg-gray-400 ">
-                <Image
-                  src={makeStringCloudflareImageUrl({
-                    id: user?.avatar,
-                    variant: "avatar",
-                  })}
-                  alt=""
-                  width={48}
-                  height={48}
-                  loading="lazy"
-                />
+                {!data?.product.image ? null : (
+                  <Image
+                    src={
+                      makeStringCloudflareImageUrl({
+                        id: user?.avatar,
+                        variant: "avatar",
+                      })!
+                    }
+                    alt=""
+                    width={48}
+                    height={48}
+                    loading="lazy"
+                  />
+                )}
               </div>
               <div>
                 <p className="font-bold text-gray-900">

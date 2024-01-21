@@ -10,6 +10,8 @@ import useSWRInfinite from "swr/infinite";
 import { globalFetcher } from "../_app";
 import { useInfinityScroll } from "@/libs/client/useInfinityScroll";
 import { useEffect } from "react";
+import { GetStaticProps } from "next";
+import client from "@/libs/server/client";
 
 const getKey = function (
   pageIndex: number,
@@ -21,23 +23,27 @@ const getKey = function (
 
 export default function Community({
   user: { user, isLoading: isLoadingUser },
+  posts: data,
 }: globalProps) {
   const router = useRouter();
 
   // useIncludeQuery("page", "1");
-  const { latitude, longitude } = useCoord();
+  // const { latitude, longitude } = useCoord();
+  //isr 위해서 주석 처리
 
-  const { data, size, setSize } = useSWRInfinite<IResponseCommunityPostsAll>(
-    getKey,
-    globalFetcher,
-    { revalidateOnFocus: false },
-  );
+  // const { data, size, setSize } = useSWRInfinite<IResponseCommunityPostsAll>(
+  //   getKey,
+  //   globalFetcher,
+  //   { revalidateOnFocus: false },
+  // );
 
-  const { page } = useInfinityScroll();
+  // const { page } = useInfinityScroll();
 
-  useEffect(() => {
-    setSize(page);
-  }, [page, setSize]);
+  // useEffect(() => {
+  //   setSize(page);
+  // }, [page, setSize]);
+
+  // console.log(posts, data);
 
   return (
     <Layout
@@ -46,8 +52,8 @@ export default function Community({
       user={!isLoadingUser && user ? user : undefined}
     >
       <div id="community-index" className="space-y-14 px-3 pt-5">
-        {data?.map((arr, index) =>
-          arr.posts.map((post, i) => (
+        {data?.map((arr: any, index: number) =>
+          arr.posts.map((post: any, i: number) => (
             <div key={i}>
               <Link href={`community/${post.id}`}>
                 <div className="space-y-3">
@@ -134,3 +140,15 @@ export default function Community({
     </Layout>
   );
 }
+export const getStaticProps: GetStaticProps = async function (context) {
+  console.log("커뮤니티 리스트 정적 변동");
+  const posts = await client.post.findMany({
+    orderBy: { id: "desc" },
+    include: { _count: true, user: { select: { id: true, name: true } } },
+  });
+
+  return {
+    props: { posts: [{ ok: true, posts: JSON.parse(JSON.stringify(posts)) }] },
+    revalidate: 10,
+  };
+};

@@ -1,3 +1,4 @@
+import { globalProps } from "@/libs/types";
 import { readdirSync } from "fs";
 import matter from "gray-matter";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
@@ -6,7 +7,7 @@ import remarkHtml from "remark-html";
 import remarkParse from "remark-parse";
 import { unified } from "unified";
 
-const BlogDetail: NextPage = ({ post }) => {
+const BlogDetail: NextPage<globalProps> = ({ post }) => {
   return (
     <div
       className="blog-detail"

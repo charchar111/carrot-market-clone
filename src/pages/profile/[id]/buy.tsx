@@ -3,10 +3,13 @@ import Item from "@/components/list-item/product";
 import ItemProductRecord from "@/components/list-item/product-record";
 import { Layout } from "@/components/layouts";
 import Link from "next/link";
+import { globalProps } from "@/libs/types";
 
-export default function profileBuy() {
+export default function profileBuy({
+  user: { user, isLoading: isLoadingUser },
+}: globalProps) {
   return (
-    <Layout canGoBack>
+    <Layout canGoBack user={!isLoadingUser && user ? user : undefined}>
       <div>
         <ItemProductRecord kind="purchase" />
 

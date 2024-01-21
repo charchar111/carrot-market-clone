@@ -1,12 +1,15 @@
 import { Layout } from "@/components/layouts";
 import useUser from "@/libs/client/useUser";
+import { globalProps } from "@/libs/types";
 import type { NextPage } from "next";
 import Link from "next/link";
 import useSWR from "swr";
 
-const Profile: NextPage = () => {
+const Profile: NextPage<globalProps> = ({
+  user: { user, isLoading: isLoadingUser },
+}) => {
   return (
-    <Layout canGoBack>
+    <Layout canGoBack user={!isLoadingUser && user ? user : undefined}>
       <div id="profile-index" className="px-4 py-10">
         <div className="head mb-10 flex items-center space-x-2">
           <div className="h-16 w-16 rounded-full bg-gray-500" />
