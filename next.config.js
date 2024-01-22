@@ -9,6 +9,14 @@ const nextConfig = {
     ],
   },
   // plugins: ["prettier-plugin-tailwindcss"],
+  async rewrites() {
+    return [
+      {
+        source: "/api/community/posts/secret",
+        destination: `/api/community/posts?secret=${process.env.NEXT_PUBLIC_REVALIDATION_SECRET_TOKEN}`,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

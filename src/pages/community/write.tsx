@@ -28,7 +28,7 @@ const Write: NextPage<globalProps> = ({
   const router = useRouter();
 
   const [mutationPost, { data, error, loading }] =
-    useMutation<IResponseCommunityWrite>("/api/community/posts");
+    useMutation<IResponseCommunityWrite>(`/api/community/posts/secret`);
 
   const onValid: SubmitHandler<IFormCommunityWrite> = function (formData) {
     if (loading) return;

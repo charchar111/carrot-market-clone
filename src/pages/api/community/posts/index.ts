@@ -37,18 +37,24 @@ async function handler(
       include: { _count: true, user: { select: { id: true, name: true } } },
     });
 
-    console.log(req.query);
+    // console.log(req.query);
 
     return res.status(200).json({ ok: true, posts });
   }
 
   if (req.method === "POST") {
     const {
+      query: { secret },
       body: { title, content, latitude, longitude },
       session: { user },
     } = req;
 
-    if (!title || !content) return res.status(401).json({ ok: false });
+    if (
+      !title ||
+      !content ||
+      secret !== process.env.NEXT_PUBLIC_REVALIDATION_SECRET_TOKEN
+    )
+      return res.status(401).json({ ok: false });
 
     const post = await client.post.create({
       data: {
@@ -59,7 +65,16 @@ async function handler(
         user: { connect: { id: user?.id } },
       },
     });
-    console.log("post", post);
+    // console.log("post", post);
+
+    // 수동 업데이트 트리거 isr
+    try {
+      await res.revalidate("/community");
+    } catch (err) {
+      return res
+        .status(500)
+        .json({ ok: false, error: { message: "error revalidating" } });
+    }
 
     return res.status(201).json({ ok: true, post: { id: post.id } });
   }

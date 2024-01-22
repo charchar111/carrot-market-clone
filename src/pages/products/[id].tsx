@@ -5,10 +5,12 @@ import useUser from "@/libs/client/useUser";
 import { makeStringCloudflareImageUrl } from "@/libs/client/utils";
 import { IResponse, globalProps } from "@/libs/types";
 import { Product } from "@prisma/client";
+import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR, { useSWRConfig } from "swr";
+import client from "@/libs/server/client";
 
 interface ProductWithUser extends Product {
   user: { id: number; name: string };
@@ -20,30 +22,46 @@ interface IResponseProduct extends IResponse {
   isLiked: boolean;
 }
 
+interface globalPropsItemDetail extends globalProps {
+  fallback: IResponseProduct;
+}
+
 export default function ItemDetail({
   user: { user, isLoading: isLoadingUser },
-}: globalProps) {
+  fallback: data,
+}: globalPropsItemDetail) {
   // const { user, isLoading: userIsLoading } = useUser();
   const router = useRouter();
+  if (router.isFallback) {
+    return (
+      <Layout canGoBack user={!isLoadingUser && user ? user : undefined}>
+        <div>loading....</div>
+      </Layout>
+    );
+  }
+
   // console.log(router.query);
   // link로 이동 시 바로 존재, url 검색이나 새로고침 시 최초는 빔
 
   // const { mutate: unboundMutate } = useSWRConfig();
-  const {
-    data,
-    mutate: boundMutate,
-    isLoading,
-  } = useSWR<IResponseProduct>(
-    router.query.id ? `/api/products/${router.query?.id}` : null,
-  );
+
+  // isr, odr을 위해 잠시 주석 처리
+  // const {
+  //   data,
+  //   mutate: boundMutate,
+  //   isLoading,
+  // } = useSWR<IResponseProduct>(
+  //   router.query.id ? `/api/products/${router.query?.id}` : null,
+  // );
+
   console.log(data);
-  const [toggleFav] = useMutation(`/api/products/${router.query?.id}/favorite`);
+  // const [toggleFav] = useMutation(`/api/products/${router.query?.id}/favorite`);
   const onFavoriteClick = () => {
-    if (isLoading) return;
-    toggleFav({});
+    // if (isLoading) return;
+    // toggleFav({});
     if (!data) return;
 
-    boundMutate((prev) => prev && { ...prev, isLiked: !prev.isLiked }, false);
+    // boundMutate((prev) => prev && { ...prev, isLiked: !prev.isLiked }, false);
   };
 
   return (
@@ -152,3 +170,63 @@ export default function ItemDetail({
     </Layout>
   );
 }
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  // return { paths: [], fallback: "blocking" };
+  return { paths: [], fallback: true };
+};
+
+export const getStaticProps: GetStaticProps = async (context: any) => {
+  const {
+    params: { id },
+  } = context;
+
+  console.log("product id", id);
+
+  if (!id) return { props: { fallback: { ok: false } } };
+  const product = await client.product.findUnique({
+    where: { id: +id.toString() },
+    include: { user: { select: { id: true, name: true, avatar: true } } },
+  });
+
+  if (!product) return { props: { fallback: { ok: false } } };
+
+  const terms = product?.name.split(" ").map((word) => ({
+    name: {
+      contains: word,
+    },
+  }));
+
+  let relatedProducts;
+  if (terms) {
+    relatedProducts = await client.product.findMany({
+      where: { OR: terms, AND: { NOT: { id: product?.id } } },
+      orderBy: { updatedAt: "desc" },
+      take: 4,
+    });
+  }
+  let isLiked = false;
+  // if (user && product) {
+  //   isLiked = Boolean(
+  //     await client.record.findFirst({
+  //       where: {
+  //         kind: "FAVORITE",
+  //         productId: product.id,
+  //         userId: user?.id,
+  //       },
+  //       select: { id: true },
+  //     }),
+  //   );
+  // }
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+  return {
+    props: {
+      fallback: {
+        ok: true,
+        product: JSON.parse(JSON.stringify(product)),
+        isLiked,
+        relatedProducts: JSON.parse(JSON.stringify(relatedProducts)),
+      },
+    },
+  };
+};

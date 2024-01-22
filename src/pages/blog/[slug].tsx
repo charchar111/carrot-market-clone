@@ -19,11 +19,12 @@ const BlogDetail: NextPage<globalProps> = ({ post }) => {
 export default BlogDetail;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const postPath = path.join(process.cwd(), "/src/posts/blog");
-  const files = readdirSync(postPath).map((e) => {
-    return { params: { slug: e.split(".")[0] } };
-  });
-  return { paths: files, fallback: false };
+  // const postPath = path.join(process.cwd(), "/src/posts/blog");
+  // const files = readdirSync(postPath).map((e) => {
+  //   return { params: { slug: e.split(".")[0] } };
+  // });
+  // return { paths: files, fallback: false };
+  return { paths: [], fallback: "blocking" };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
@@ -38,7 +39,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     .use(remarkHtml)
     .process(mat.content);
 
-  console.log("param", context.params, mat.content, postHtml);
+  // console.log("param", context.params, mat.content, postHtml);
 
   return { props: { post: postHtml } };
 };
