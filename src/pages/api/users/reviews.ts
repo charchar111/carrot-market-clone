@@ -14,6 +14,7 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>,
 ): Promise<any> {
+  // await new Promise((res) => setTimeout(res, 5000));
   const {
     session: { user },
   } = req;

@@ -1,8 +1,6 @@
 import FloatingButtonLink from "@/components/floating-button-link";
-import Item from "@/components/list-item/product";
 import ItemProductRecord from "@/components/list-item/product-record";
 import { Layout } from "@/components/layouts";
-import Link from "next/link";
 import { globalProps } from "@/libs/types";
 
 export default function profileLove({

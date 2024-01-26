@@ -8,21 +8,22 @@ import Link from "next/link";
 import useSWR, { SWRConfig } from "swr";
 import { makeStringCloudflareImageUrl } from "@/libs/client/utils";
 import { withApiSessionSSR } from "@/libs/server/withSession";
+import { Suspense, useEffect, useState } from "react";
+import useUser from "@/libs/client/useUser";
+import Loading from "@/components/loading";
+import { globalFetcher } from "../_app";
+import dynamic from "next/dynamic";
 
 const Profile: NextPage<globalProps> = ({
-  user: { user: userData, isLoading },
-  fallback,
+  user: { user, isLoading },
+  // fallback,
 }) => {
-  const { data: dataReview } = useSWR<IResponseReviews>("/api/users/reviews");
-  const user = !userData ? fallback.profile : userData;
+  // console.log(dataReview);
+  // const user = !userData ? fallback.profile : userData;
   // const user = fallback["/api/users/me"]?.profile;
   // const dataReview = fallback["/api/users/reviews"];
   return (
-    <Layout
-      canGoBack
-      user={!isLoading && user ? user : undefined}
-      // user={user}
-    >
+    <Layout canGoBack user={!isLoading && user ? user : undefined}>
       <div id="profile-index" className="px-4 py-10">
         <div className="head mb-10 flex items-center space-x-2">
           <div className="h-16 w-16 overflow-hidden rounded-full bg-gray-500">
@@ -36,6 +37,7 @@ const Profile: NextPage<globalProps> = ({
               />
             )}
           </div>
+
           <div className="flex flex-col">
             <span className="font-semibold">{user?.name}</span>
             <Link href={`/profile/edit`}>
@@ -121,9 +123,9 @@ const Profile: NextPage<globalProps> = ({
         </div>
 
         <section className="user-rating mt-10">
-          {dataReview?.reviews.map((element, index) => (
-            <ItemProfieReview key={index} data={element} />
-          ))}
+          <Suspense fallback={<Loading />}>
+            <ItemProfieReview />
+          </Suspense>
         </section>
       </div>
     </Layout>
@@ -132,46 +134,78 @@ const Profile: NextPage<globalProps> = ({
 
 // export default Profile;
 
-const Page: NextPage<globalProps> = ({ user, fallback }) => {
-  // console.log(fallback);
+const Page: NextPage<globalProps> = ({
+  user,
+  //  fallback
+}) => {
+  // console.log("page \n \n \n");
+  // console.log("window", globalThis);
   return (
-    <SWRConfig value={{ fallback }}>
-      <Profile user={user} fallback={fallback["/api/users/me"]} />
+    <SWRConfig
+      value={{
+        // fallback: {
+        //   "/api/users/reviews": undefined,
+        //   //  {
+        //   //   //     // ok: true,
+        //   //   // ok: false,
+        //   //   // reviews: [],
+        //   //   //     // reviews: [
+        //   //   //     //   {
+        //   //   //     //     id: 1,
+        //   //   //     //     createdAt: "2024-01-03T00:22:31.703Z",
+        //   //   //     //     updatedAt: "2024-01-05T21:47:37.236Z",
+        //   //   //     //     content: "사장님이 친절해요 :)",
+        //   //   //     //     score: 1,
+        //   //   //     //     CreatedById: 2,
+        //   //   //     //     CreatedForId: 3,
+        //   //   //     //     CreatedBy: {
+        //   //   //     //       id: 2,
+        //   //   //     //       name: "anon",
+        //   //   //     //       avatar: null,
+        //   //   //     //     },
+        //   //   //     //   },
+        //   //   //     // ],
+        //   // },
+        // },
+        suspense: true,
+      }}
+    >
+      <Profile user={user} />
     </SWRConfig>
   );
 };
+export default dynamic(async () => Page, { ssr: false });
+// export default Page;
 
-export default Page;
+// export const getServerSideProps = withApiSessionSSR(
+//   async ({ req, res, query }: NextPageContext) => {
+//     // console.log(req?.session);
+//     if (!req?.session.user?.id) return;
 
-export const getServerSideProps = withApiSessionSSR(
-  async ({ req, res, query }: NextPageContext) => {
-    // console.log(req?.session);
-    if (!req?.session.user?.id) return;
+//     const profile = await client.user.findUnique({
+//       where: { id: req?.session.user?.id! },
+//     });
 
-    const profile = await client.user.findUnique({
-      where: { id: req?.session.user?.id! },
-    });
+//     const reviews = await client.review.findMany({
+//       where: { CreatedFor: { id: req?.session.user?.id! } },
+//       include: {
+//         CreatedBy: { select: { id: true, name: true, avatar: true } },
+//       },
+//     });
 
-    const reviews = await client.review.findMany({
-      where: { CreatedFor: { id: req?.session.user?.id! } },
-      include: {
-        CreatedBy: { select: { id: true, name: true, avatar: true } },
-      },
-    });
-
-    return {
-      props: {
-        fallback: {
-          "/api/users/me": {
-            ok: true,
-            profile: JSON.parse(JSON.stringify(profile)),
-          },
-          "/api/users/reviews": {
-            ok: true,
-            reviews: JSON.parse(JSON.stringify(reviews)),
-          },
-        },
-      },
-    };
-  },
-);
+//     return {
+//       props: {
+//         fallback: {
+//           "/api/users/me": {
+//             ok: true,
+//             profile: JSON.parse(JSON.stringify(profile)),
+//           },
+//           "/api/users/reviews": {
+//             ok: true,
+//             reviews: JSON.parse(JSON.stringify(reviews)),
+//           },
+//         },
+//       },
+//     };
+//   },
+// );
