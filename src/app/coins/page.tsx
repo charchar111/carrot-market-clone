@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-const cache: { [key: string]: [] } = {};
+const cache: { [key: string]: any[] } = {};
 
 const fetchData = function (url: string) {
   if (!cache[url]) {
@@ -14,7 +14,7 @@ const fetchData = function (url: string) {
   return cache[url];
 };
 function CoinTicker({ id, name, symbol }: any) {
-  const ticker = fetchData(`https://api.coinpaprika.com/v1/tickers/${id}`);
+  const ticker: any = fetchData(`https://api.coinpaprika.com/v1/tickers/${id}`);
   // console.log(ticker);
   return (
     <li className="my-5">
