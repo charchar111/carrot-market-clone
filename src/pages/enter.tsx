@@ -110,7 +110,9 @@ function Enter({ user }: globalProps) {
       user={!user.isLoading && user.user ? user.user : undefined}
     >
       <div className="mx-auto  min-w-[250px] space-y-5 px-3  py-10 text-center   ">
-        <h3 className="text-2xl font-semibold">Enter to Carrot</h3>
+        <h3 className="text-2xl font-semibold">
+          Welcome to Carrot market!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        </h3>
         <div className=" relative flex flex-col items-center space-y-5 text-center">
           {data?.ok ? (
             <form
