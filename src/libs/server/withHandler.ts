@@ -23,7 +23,13 @@ export default function withHandler({
     if (req.method && !methods.includes(req.method as any))
       return res.status(405).end();
 
-    if (isPrivate && !req.session.user)
+    if (
+      isPrivate &&
+      (!req.session.user ||
+        !(await client?.user.findUnique({
+          where: { id: req.session.user.id },
+        })))
+    )
       return res
         .status(401)
         .json({ ok: false, error: { message: "please login" } });
