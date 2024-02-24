@@ -21,8 +21,13 @@ export default function withHandler({
 }: configType) {
   return async function (req: NextApiRequest, res: NextApiResponse) {
     console.log(req.method, methods);
-    if (req.method && !methods.includes(req.method as any))
-      return res.status(405).end();
+    if (req.method && !methods.includes(req.method as any)) {
+      return res.status(405).json({
+        ok: false,
+        error: "잘못된 요청 수단입니다.",
+        cause: JSON.stringify({ a: req.method, b: methods }),
+      });
+    }
 
     if (
       isPrivate &&
