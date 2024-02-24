@@ -111,7 +111,8 @@ function Enter({ user }: globalProps) {
     >
       <div className="mx-auto  min-w-[250px] space-y-5 px-3  py-10 text-center   ">
         <h3 className="text-2xl font-semibold">
-          Welcome to Carrot market!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          캐럿 마켓 서비스에 오신 걸 환영합니다. <br /> 본 서비스는 로그인 이후
+          사용가능합니다.
         </h3>
         <div className=" relative flex flex-col items-center space-y-5 text-center">
           {data?.ok ? (

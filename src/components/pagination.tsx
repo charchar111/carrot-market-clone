@@ -86,7 +86,7 @@ export default function Pagination({
 
           return (
             <Link
-              href={`${router.pathname}?${query}=${
+              href={`${pathname && router.pathname}?${query}=${
                 pageState * PAGE_BUTTON_COUNT + index + 1
               }`}
               // href={`/lives?page=${pageState * PAGE_BUTTON_COUNT + index + 1}`}

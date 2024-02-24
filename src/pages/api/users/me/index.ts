@@ -31,7 +31,7 @@ async function handler(
     let updateData: IUpdateData = {};
     // update 쿼리를 위한 객체
 
-    console.log("profile edit", email, phone, name);
+    // console.log("profile edit", email, phone, name);
 
     const currentUser = await client.user.findUnique({
       where: { id: user?.id },
