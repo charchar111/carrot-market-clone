@@ -83,9 +83,9 @@ async function handler(
       return;
     };
 
-    const send = await smtpTransport.sendMail(emailOption, errorCallback);
+    await smtpTransport.sendMail(emailOption, errorCallback);
     smtpTransport.close();
-    console.log(send);
+    // console.log(send);
   }
 
   // console.log(token);
