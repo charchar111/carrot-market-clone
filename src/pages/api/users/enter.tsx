@@ -56,15 +56,16 @@ async function handler(
 
   // 실제 토큰 발송 api 주석 처리
   // 코스트 낭비 방지용
-  // if (phone) {
-  //   const message = await twilioClient.messages.create({
-  //     body: `캐럿마켓 클론에서 보낸 인증메시지입니다. 로그인을 위한 토큰입니다. \n ${payload}`,
-  //     to: process.env.PHONE_NUMBER!, // Text your number
-  //     messagingServiceSid: process.env.TWLIO_MESSAGE_SERVICE_SID,
-  //   });
+  if (phone) {
+    const message = await twilioClient.messages.create({
+      body: `캐럿마켓 클론에서 보낸 인증메시지입니다. 로그인을 위한 토큰입니다. \n ${payload}`,
+      // to: process.env.PHONE_NUMBER!, // Text your number
+      to: "+82" + phone,
+      messagingServiceSid: process.env.TWLIO_MESSAGE_SERVICE_SID,
+    });
 
-  //   console.log(message);
-  // }
+    console.log(message);
+  }
 
   // 실제 토큰 발송 api 주석 처리
   // 코스트 낭비 방지용
