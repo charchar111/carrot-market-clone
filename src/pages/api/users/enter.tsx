@@ -70,7 +70,7 @@ async function handler(
   // 실제 토큰 발송 api 주석 처리
   // 코스트 낭비 방지용
   if (email) {
-    console.log("이메일 form 확인, 인증 작업 1단계 시작");
+    console.log("이메일 form 확인, 인증 작업 1단계 시작", payload);
     const emailOption = {
       from: process.env.MAIL_ID,
       to: email,
@@ -79,8 +79,8 @@ async function handler(
     };
 
     const errorCallback = (error: any, responses: any) => {
-      if (error) console.log("email error", error);
-      else if (responses) console.log("email responses", responses);
+      // if (error) console.log("email error", error);
+      // else if (responses) console.log("email responses", responses);
       return;
     };
 

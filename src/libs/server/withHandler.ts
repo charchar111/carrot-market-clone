@@ -20,7 +20,6 @@ export default function withHandler({
   isPrivate = true,
 }: configType) {
   return async function (req: NextApiRequest, res: NextApiResponse) {
-    console.log(req.method, methods);
     if (req.method && !methods.includes(req.method as any)) {
       return res.status(405).end();
     }
